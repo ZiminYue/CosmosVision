@@ -1,8 +1,10 @@
+#Research Notes
+
 ###June 21
 
-Refined research question
+- Refined research question
 
 ###June 22 
 
-Structured the literature review
+- Structured the literature review
 
