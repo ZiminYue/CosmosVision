@@ -12,3 +12,8 @@
 
 - Conducted literature research on identity inequality caused by perception-based bias.
 - Refined the 1st section of main body (not finished)
+
+### June 24 
+
+- Conducted literature research on identity inequality's effects.
+- Refined the 1st section of main body
