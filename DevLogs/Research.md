@@ -20,4 +20,4 @@
 
 ### June 25 
 
-- Conducted some research on viable technologies.
+- Conducted some research on viable technologies. Found some C++ open source projects possibly avaliable for visual output.
