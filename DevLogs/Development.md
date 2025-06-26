@@ -1,6 +1,7 @@
 ### June 26
 
 - Tested **Galaxy Engine** from https://github.com/NarcisCalin/Galaxy-Engine (C++, only avaliable for Windows) and built the executable exe file
+  
 Notes:
 1. For building it in **VS Code**, need to download and install **MinGW-w64** from WinLibs (https://www.winlibs.com/)
 2. Install the plugins that VS Code recommanded (for C++)
