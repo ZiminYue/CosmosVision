@@ -2,7 +2,7 @@
 
 - Tested **Galaxy Engine** from https://github.com/NarcisCalin/Galaxy-Engine (C++, only avaliable for Windows) and built the executable exe file
   
-Notes:
+*Notes*:
 1. For building it in **VS Code**, need to download and install **MinGW-w64** from WinLibs (https://www.winlibs.com/)
 2. Install the plugins that VS Code recommanded (for C++)
 3. Add a line to the environment variables (`Path-to-MinGW\mingw64\bin`)
@@ -29,4 +29,4 @@ Plan 2: Convert the C++ system to Python
 Plan 3: Rebuild the visual part in Python, after figuring out how the C++ system calculates physics like gravity.
 Plan 4: Maybe explore a different visual style altogether—something like the pixel-based planet generators (e.g., https://github.com/Deep-Fold/PixelPlanets).
 
-Notes: Since my familiarity with the languages is like `JavaScript ≥ Python > C++`, guess Plan 2 might be tough. Kinda want to test out Plan 4 though.
+*Notes*: Since my familiarity with the languages is like `JavaScript ≥ Python > C++`, guess Plan 2 might be tough. Kinda want to test out Plan 4 though.
