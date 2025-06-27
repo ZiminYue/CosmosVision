@@ -20,13 +20,18 @@
 - Started considering how may I combine it with Python code
 
 
+
 ### June 27
 
 - Discussed with LLMs about possible development directions:
 
 Plan 1: Use Python and Mediapipe for pose detection (like I did before), then pass the data to the C++-based system for visual output
+
 Plan 2: Convert the C++ system to Python
+
 Plan 3: Rebuild the visual part in Python, after figuring out how the C++ system calculates physics like gravity.
+
 Plan 4: Maybe explore a different visual style altogether—something like the pixel-based planet generators (e.g., https://github.com/Deep-Fold/PixelPlanets).
+
 
 *Notes*: Since my familiarity with the languages is like `JavaScript ≥ Python > C++`, guess Plan 2 might be tough. Kinda want to test out Plan 4 though.
