@@ -11,12 +11,12 @@
 ### June 23 
 
 - Conducted literature research on identity inequality caused by perception-based bias
-- Refined the 1st section of main body (not finished)
+- Refined the 1st section of the literature review's main body (not finished)
 
 ### June 24 
 
 - Conducted literature research on identity inequality's effects
-- Refined the 1st section of main body
+- Refined the 1st section of the literature review's main body
 
 ### June 25 
 
@@ -25,4 +25,4 @@
 ### July 2 
 
 - Conducted literature research on the method of ensuring inclusivity in digital space (take video games for example).
-- Completed the 2nd section of main body
+- Completed the 2nd section of the literature review's main body
