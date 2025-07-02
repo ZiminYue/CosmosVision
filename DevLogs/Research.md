@@ -25,3 +25,4 @@
 ### July 2 
 
 - Conducted literature research on the method of ensuring inclusivity in digital space (take video games for example).
+- Completed the 2nd section of main body
