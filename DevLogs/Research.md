@@ -24,11 +24,17 @@
 
 ### July 2 
 
-- Conducted literature research on the method of ensuring inclusivity in digital space, taking video games for example.
+- Conducted literature research on the method of ensuring inclusivity in digital space, taking video games for example
 - Completed the 2nd section of the literature review's main body
 - Refined the 3rd section of the literature review's main body (just started)
 
 ### July 3 
 
-- Conducted literature research on the appeal of the futuristic and macro perspectives.
+- Conducted literature research on the appeal of the futuristic and macro perspectives
 - Refined the 3rd section of the literature review's main body (not finished)
+
+### July 4 
+
+- Conducted literature research on the appeal of the universe
+- Refined the 3rd section of the literature review's main body (almost finished)
+
