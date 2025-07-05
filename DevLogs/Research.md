@@ -38,3 +38,6 @@
 - Conducted literature research on the appeal of the universe
 - Refined the 3rd section of the literature review's main body (almost finished)
 
+### July 5 
+
+- Completed the 3rd section of the literature review's main body
