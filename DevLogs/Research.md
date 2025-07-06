@@ -41,3 +41,8 @@
 ### July 5 
 
 - Completed the 3rd section of the literature review's main body
+- Conducted literature research on the connection between motion and identity (just started)
+
+### July 6 
+
+- Conducted literature research on the connection between motion and identity
