@@ -46,3 +46,9 @@
 ### July 6 
 
 - Conducted literature research on the connection between motion and identity
+
+### July 9 
+
+- Conducted literature research on technologies for motion capture and space art generation
+- Refined the 4th section of the literature review's main body
+- Completed literature review ver. 2
