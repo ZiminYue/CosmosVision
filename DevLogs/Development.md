@@ -35,3 +35,9 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 
 *Notes*: Since my familiarity with the languages is like `JavaScript ≥ Python > C++`, guess Plan 2 might be tough. Kinda want to test out Plan 4 though.
+
+
+### June 25-26
+
+- Conducted Plan 3 with the help of ChatGPT, converted some calculation fomulas to Python.
+
