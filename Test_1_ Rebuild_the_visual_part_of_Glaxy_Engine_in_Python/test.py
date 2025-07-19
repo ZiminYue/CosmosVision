@@ -5,7 +5,7 @@ engine = GalaxyEngine(count=1000, bounds=100)
 
 # Simulate several frames in a row
 for step in range(100):
-    engine.update(dt=0.05, interaction_rate=0.01, black_hole_mass=50)
+    engine.update(dt=0.05, theta=0.5, black_hole_mass=50)
 
 # Get the updated position
 positions = engine.positions

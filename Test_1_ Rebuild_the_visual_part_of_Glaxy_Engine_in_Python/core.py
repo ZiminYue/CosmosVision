@@ -1,141 +1,151 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-# Main simulation engine for galaxy particles
+class Particle:
+    """
+    A simple particle object representing a star or mass point.
+    Each particle has a position, mass, velocity, and net force.
+    """
+    def __init__(self, pos, mass, index=None):
+        self.pos = np.array(pos, dtype=np.float64)   # 2D position
+        self.mass = mass                             # Scalar mass
+        self.index = index                           # Optional index ID
+        self.force = np.zeros(2)                     # Net force acting on the particle
+        self.vel = np.zeros(2)                       # Current velocity
+
+
+class QuadtreeNode:
+    """
+    A node in the quadtree structure for spatial partitioning and Barnes-Hut force approximation.
+    """
+    max_leaf_particles = 10      # Maximum number of particles in a leaf node
+    min_leaf_size = 1e-3         # Smallest allowable node size (prevents infinite subdivision)
+
+    def __init__(self, center, half_size, start_index, end_index, particles):
+        self.center = np.array(center, dtype=float)   # Center of the current quadrant
+        self.half_size = half_size                    # Half the width/height of the node
+        self.start_index = start_index                # Start index in the particle list
+        self.end_index = end_index                    # End index in the particle list
+        self.particles = particles                    # List of particle objects in this region
+
+        self.mass = 0.0                               # Total mass of this node
+        self.center_of_mass = np.zeros(2)             # Center of mass for all particles in this node
+        self.sub_grids = []                           # Children (subdivided) nodes
+
+        if (end_index - start_index) <= QuadtreeNode.max_leaf_particles or half_size * 2 <= QuadtreeNode.min_leaf_size:
+            self.compute_leaf_mass()
+        else:
+            self.subdivide()
+            self.compute_internal_mass()
+
+    def compute_leaf_mass(self):
+        """
+        Calculates total mass and center of mass for a leaf node (no further subdivision).
+        """
+        mass_sum = 0.0
+        weighted_pos_sum = np.zeros(2)
+        for i in range(self.start_index, self.end_index):
+            p = self.particles[i]
+            mass_sum += p.mass
+            weighted_pos_sum += p.mass * p.pos
+        self.mass = mass_sum
+        self.center_of_mass = weighted_pos_sum / mass_sum if mass_sum > 0 else self.center
+
+    def compute_internal_mass(self):
+        """
+        Calculates the mass and center of mass based on child nodes.
+        """
+        self.mass = 0.0
+        self.center_of_mass = np.zeros(2)
+        for node in self.sub_grids:
+            self.mass += node.mass
+            self.center_of_mass += node.mass * node.center_of_mass
+        if self.mass > 0:
+            self.center_of_mass /= self.mass
+
+    def subdivide(self):
+        """
+        Subdivides the current region into 4 quadrants and assigns particles to the appropriate child node.
+        """
+        hs = self.half_size / 2
+        for dx in [-hs, hs]:
+            for dy in [-hs, hs]:
+                sub_center = self.center + np.array([dx, dy])
+                sub_particles = [
+                        self.particles[i] for i in range(self.start_index, self.end_index)
+                        if np.all(np.abs(self.particles[i].pos - sub_center) < hs)
+                    ]
+                if sub_particles:
+                    self.sub_grids.append(
+                        QuadtreeNode(sub_center, hs, 0, len(sub_particles), sub_particles)
+                    )
+
+    def compute_force_on(self, particle, theta=0.5, G=1.0, eps=1e-1):
+        """
+        Computes the gravitational force from this node on a target particle using Barnes-Hut approximation.
+        """
+        dx = self.center_of_mass - particle.pos
+        dist = np.linalg.norm(dx) + eps  # Avoid division by zero
+        if not self.sub_grids or self.half_size / dist < theta:
+            # Use this node's total mass if it's sufficiently far
+            force = G * self.mass * dx / (dist**3)
+            return force
+        else:
+            # Otherwise, recurse into subnodes
+            force = np.zeros(2)
+            for node in self.sub_grids:
+                force += node.compute_force_on(particle, theta, G, eps)
+            return force
+
+
 class GalaxyEngine:
-    def __init__(self, count, mass_range=(1, 10), bounds=100):
+    """
+    The main simulation engine. Manages particles, updates their positions using gravitational forces,
+    and builds the quadtree structure each frame.
+    """
+    def __init__(self, count=1000, bounds=100):
         self.bounds = bounds
-        self.count = count
-        self.masses = np.random.uniform(*mass_range, size=(count, 1))
-        self.positions = np.random.uniform(-bounds, bounds, size=(count, 3))
-        self.speeds = np.zeros((count, 3))
-        self.accelerations = np.zeros((count, 3))
+        self.particles = self.generate_particles(count)
 
-    def update(self, dt=0.01, interaction_rate=1.0, black_hole_mass=0.0):
-        n = self.count
-        acc = np.zeros_like(self.positions)
-
-        for i in range(n):
-            force = np.zeros(3)
-            for j in range(int(interaction_rate * n)):
-                if i == j:
-                    continue
-                r_vec = self.positions[j] - self.positions[i]
-                r_norm2 = np.sum(r_vec**2) + 0.01  # Prevent division by zero
-                force += r_vec / r_norm2
-
-            # Add gravitational pull from the center if black hole mass > 0
-            if black_hole_mass > 0.0:
-                center_vec = -self.positions[i]
-                center_r2 = np.sum(center_vec**2) + 0.01
-                force += black_hole_mass * center_vec / center_r2
-
-            acc[i] = force / interaction_rate
-
-        self.accelerations = acc
-        self.speeds += dt * self.accelerations
-        self.positions += dt * self.speeds
-
-        # Keep all particles within the bounded simulation space
-        self.positions = np.clip(self.positions, -self.bounds, self.bounds)
-
-
-# Simple 3D scatter plot to visualize the starfield
-def plot_starfield(positions):
-    fig = plt.figure(figsize=(10, 8))
-    ax = fig.add_subplot(111, projection='3d')
-    ax.set_facecolor('black')
-    fig.patch.set_facecolor('black')
-
-    ax.scatter(
-        positions[:, 0],
-        positions[:, 1],
-        positions[:, 2],
-        c='white',
-        s=2,
-        alpha=0.8
-    )
-
-    ax.set_title('Simulated Starfield', color='white')
-    ax.tick_params(colors='white')
-    ax.xaxis._axinfo["grid"]['color'] = "white"
-    ax.yaxis._axinfo["grid"]['color'] = "white"
-    ax.zaxis._axinfo["grid"]['color'] = "white"
-
-    plt.show()
-
-
-# Represents a directional input force generated by a slingshot gesture
-class Slingshot:
-    def __init__(self, norm=np.array([0.0, 0.0]), length=0.0):
-        self.norm = norm
-        self.length = length
-
-    @staticmethod
-    def from_positions(start_pos, end_pos):
+    def generate_particles(self, count):
         """
-        Simulates a slingshot generated by dragging the mouse:
-        start_pos = drag start point, end_pos = release point
+        Initializes particles with random positions and masses within the simulation bounds.
         """
-        dist = start_pos - end_pos
-        length = np.linalg.norm(dist)
-        if length == 0:
-            return Slingshot()
-        norm = dist / length
-        return Slingshot(norm, length)
-    
-class Morton:
-    @staticmethod
-    def scale_to_grid(pos, min_val, max_val):
-        """Clamp and normalize position to a 0–2047 grid."""
-        if max_val <= min_val:
-            return 0
-        clamped = np.clip(pos, min_val, max_val)
-        normalized = (clamped - min_val) / (max_val - min_val)
-        return int(normalized * 2047)
+        pos = np.random.uniform(-self.bounds, self.bounds, size=(count, 2))
+        mass = np.random.uniform(0.5, 1.5, size=count)
+        return [Particle(p, m, i) for i, (p, m) in enumerate(zip(pos, mass))]
 
-    @staticmethod
-    def spread_bits(x):
-        """Spread 11-bit integer bits to prepare for Morton encoding."""
-        x &= 0x7FF
-        x = (x | (x << 8)) & 0x00FF00FF00FF00FF
-        x = (x | (x << 4)) & 0x0F0F0F0F0F0F0F0F
-        x = (x | (x << 2)) & 0x3333333333333333
-        x = (x | (x << 1)) & 0x5555555555555555
-        return x
-
-    @staticmethod
-    def morton2D(x, y):
-        """Combine two spread integers into a 2D Morton code."""
-        return Morton.spread_bits(x) | (Morton.spread_bits(y) << 1)
-
-    @staticmethod
-    def compute_morton_keys(p_particles, min_position, size):
+    def update(self, dt=0.1, theta=0.5, black_hole_mass=500.0):
         """
-        Assign Morton keys to particle physics objects based on position.
-        p_particles: list of ParticlePhysics-like objects with `.pos` and `.mortonKey`
-        min_position: np.array([x, y])
+        Updates the entire simulation by:
+        - Constructing the quadtree for Barnes-Hut approximation
+        - Computing net forces on each particle
+        - Updating positions and velocities using simple Euler integration
         """
-        max_x = min_position[0] + max(size, 1e-6)
-        max_y = min_position[1] + max(size, 1e-6)
+        # Build the quadtree with all particles
+        root = QuadtreeNode(center=[0, 0], half_size=self.bounds,
+                            start_index=0, end_index=len(self.particles),
+                            particles=self.particles)
 
-        for p in p_particles:
-            ix = Morton.scale_to_grid(p.pos[0], min_position[0], max_x)
-            iy = Morton.scale_to_grid(p.pos[1], min_position[1], max_y)
-            p.mortonKey = Morton.morton2D(ix, iy)
+        for p in self.particles:
+            # Gravitational force toward central black hole (at origin)
+            dx = -p.pos
+            r = np.linalg.norm(dx) + 1e-1
+            force_black_hole = black_hole_mass * dx / (r**3)
 
-    @staticmethod
-    def sort_particles_by_morton_key(p_particles, r_particles):
+            # Force from other particles using Barnes-Hut tree
+            force_tree = root.compute_force_on(p, theta=theta)
+
+            # Combine both forces
+            p.force = force_black_hole + force_tree
+
+            # Integrate to update velocity and position
+            acc = p.force / p.mass
+            p.vel += acc * dt
+            p.pos += p.vel * dt
+
+    @property
+    def positions(self):
         """
-        Sort both physics and rendering particles by mortonKey in-place.
+        Returns current particle positions as a numpy array.
         """
-        indices = list(range(len(p_particles)))
-        indices.sort(key=lambda i: p_particles[i].mortonKey)
-
-        p_sorted = [p_particles[i] for i in indices]
-        r_sorted = [r_particles[i] for i in indices]
-
-        # Update in-place
-        p_particles[:] = p_sorted
-        r_particles[:] = r_sorted
+        return np.array([p.pos for p in self.particles])
