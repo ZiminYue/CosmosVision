@@ -1,19 +1,14 @@
 from core import GalaxyEngine, plot_starfield
-import time
 
-# Initialize GalaxyEngine instance
-galaxy = GalaxyEngine(
-    count=500,                # Number of particles (can be adjusted)
-    mass_range=(1, 5),        # Mass range for each particle
-    bounds=100                # Spatial boundary size
-)
+# Initialize a simulator and generate 1000 particles
+engine = GalaxyEngine(count=1000, bounds=100)
 
-# Simulate multiple time steps
-num_steps = 100
-for step in range(num_steps):
-    galaxy.update(dt=0.02, interaction_rate=1.0, black_hole_mass=50.0)
-    if step % 10 == 0:
-        print(f"Step {step} done")
+# Simulate several frames in a row
+for step in range(100):
+    engine.update(dt=0.05, interaction_rate=0.01, black_hole_mass=50)
 
-# Render the final image
-plot_starfield(galaxy.positions)
+# Get the updated position
+positions = engine.positions
+
+# Visualize the current particle distribution
+plot_starfield(positions)
