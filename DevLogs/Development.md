@@ -42,5 +42,9 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 - Conducted Plan 3 with the help of ChatGPT, converted some calculation fomulas to Python.
 
 ### July 17-18
-- Converted `physics.cpp` fomulas to Python
+- Converted `physics.cpp` and `morton.cpp` fomulas to Python (`core.py`).
 - Created `tech work` branch on GitHub for test files
+
+### July 19
+- Converted `quadtree.cpp` to Python (`quadtree.py`).
+- Created `test_animation.py` for animated test output.
