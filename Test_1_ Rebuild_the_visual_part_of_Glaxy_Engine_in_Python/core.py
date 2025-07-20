@@ -1,4 +1,5 @@
 import numpy as np
+from sph_module import SPHModule
 
 class Particle:
     """
@@ -11,6 +12,10 @@ class Particle:
         self.index = index                           # Optional index ID
         self.force = np.zeros(2)                     # Net force acting on the particle
         self.vel = np.zeros(2)                       # Current velocity
+         # SPH 
+        self.density = 0.0
+        self.pressure = 0.0
+        self.pressure_force = np.zeros(2) 
 
 
 class QuadtreeNode:
@@ -105,6 +110,7 @@ class GalaxyEngine:
     def __init__(self, count=1000, bounds=100):
         self.bounds = bounds
         self.particles = self.generate_particles(count)
+        self.sph = SPHModule(h=5.0)
 
     def generate_particles(self, count):
         """
@@ -114,33 +120,30 @@ class GalaxyEngine:
         mass = np.random.uniform(0.5, 1.5, size=count)
         return [Particle(p, m, i) for i, (p, m) in enumerate(zip(pos, mass))]
 
-    def update(self, dt=0.1, theta=0.5, black_hole_mass=500.0):
+    def update(self, dt=0.1, theta=0.5, black_hole_mass=500):
         """
-        Updates the entire simulation by:
-        - Constructing the quadtree for Barnes-Hut approximation
-        - Computing net forces on each particle
-        - Updating positions and velocities using simple Euler integration
-        """
-        # Build the quadtree with all particles
-        root = QuadtreeNode(center=[0, 0], half_size=self.bounds,
-                            start_index=0, end_index=len(self.particles),
-                            particles=self.particles)
+        Advance the simulation by one time step.
 
+        Args:
+            dt (float): Time step size.
+            theta (float): Barnes-Hut approximation threshold.
+            black_hole_mass (float): Mass of central black hole for gravitational pull.
+        """
+
+        # Step 1: Compute SPH-related densities and pressures (if used)
+        if self.sph is not None:
+            self.sph.compute_density_and_pressure(self.particles)
+
+        # Step 2: Apply gravitational acceleration from a central black hole
         for p in self.particles:
-            # Gravitational force toward central black hole (at origin)
-            dx = -p.pos
-            r = np.linalg.norm(dx) + 1e-1
-            force_black_hole = black_hole_mass * dx / (r**3)
+            direction = -p.pos  # pull toward origin
+            distance = np.linalg.norm(direction) + 1e-5  # avoid division by zero
+            force = black_hole_mass * p.mass / (distance**2)
+            acc = force * direction / distance / p.mass
+            p.vel += acc * dt  # update velocity
 
-            # Force from other particles using Barnes-Hut tree
-            force_tree = root.compute_force_on(p, theta=theta)
-
-            # Combine both forces
-            p.force = force_black_hole + force_tree
-
-            # Integrate to update velocity and position
-            acc = p.force / p.mass
-            p.vel += acc * dt
+        # Step 3: Update position using new velocity
+        for p in self.particles:
             p.pos += p.vel * dt
 
     @property
@@ -149,3 +152,5 @@ class GalaxyEngine:
         Returns current particle positions as a numpy array.
         """
         return np.array([p.pos for p in self.particles])
+    
+

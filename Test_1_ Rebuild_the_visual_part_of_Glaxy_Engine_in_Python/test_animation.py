@@ -4,7 +4,7 @@ from matplotlib.animation import FuncAnimation
 from core import GalaxyEngine
 
 # Initialize the GalaxyEngine simulator with 1000 particles inside a square boundary of size 100
-engine = GalaxyEngine(count=1000, bounds=100)
+engine = GalaxyEngine(count=300, bounds=100)
 
 # Create a matplotlib figure and axis for plotting
 fig, ax = plt.subplots(figsize=(8, 8))
@@ -42,7 +42,7 @@ def update(frame):
         tuple: updated scatter plot artist
     """
     # Advance simulation by one timestep
-    engine.update(dt=0.1, theta=0.5, black_hole_mass=500)
+    engine.update(dt=0.5, theta=0.5, black_hole_mass=6000)
 
     # Extract updated 2D positions of particles
     positions = np.array([p.pos for p in engine.particles])
