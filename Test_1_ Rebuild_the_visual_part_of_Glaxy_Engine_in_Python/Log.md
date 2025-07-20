@@ -12,3 +12,8 @@
 
 2. Added `test_animation.py` for 2-dimentional animation output (`test.py` is not avaliable in current version).
 - Test output-03: ![Description](TestOutput/0719.gif)
+
+### July 20
+
+1. Converted `SPH.cpp` into `sph_module.py` and integrated it into `core.py`, to compute fluid particle interactions through density and pressure calculations, enhancing the fluid dynamics realism in the galaxy simulation.
+2. - Test output-04: ![Description](TestOutput/0720.gif)
