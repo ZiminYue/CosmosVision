@@ -16,4 +16,8 @@
 ### July 20
 
 1. Converted `SPH.cpp` into `sph_module.py` and integrated it into `core.py`, to compute fluid particle interactions through density and pressure calculations, enhancing the fluid dynamics realism in the galaxy simulation.
-2. - Test output-04: ![Description](TestOutput/0720.gif)
+- Test output-04: ![Description](TestOutput/0720.gif)
+
+2. Converted `slingshot.cpp` into `slingshot.py` and integrated it into `core.py`, enabling interactively launch particles by clicking and dragging, enabling real-time testing of motion dynamics and parameter effects.
+- Test output-05: ![Description](TestOutput/0720-02.gif)
+
