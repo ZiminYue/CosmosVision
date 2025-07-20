@@ -1,5 +1,7 @@
 import numpy as np
 from sph_module import SPHModule
+from slingshot import particle_slingshot
+import matplotlib.pyplot as plt
 
 class Particle:
     """
@@ -130,21 +132,32 @@ class GalaxyEngine:
             black_hole_mass (float): Mass of central black hole for gravitational pull.
         """
 
-        # Step 1: Compute SPH-related densities and pressures (if used)
+        #Step 1: Compute SPH-related densities and pressures (if used)
         if self.sph is not None:
             self.sph.compute_density_and_pressure(self.particles)
 
-        # Step 2: Apply gravitational acceleration from a central black hole
-        for p in self.particles:
-            direction = -p.pos  # pull toward origin
-            distance = np.linalg.norm(direction) + 1e-5  # avoid division by zero
-            force = black_hole_mass * p.mass / (distance**2)
-            acc = force * direction / distance / p.mass
-            p.vel += acc * dt  # update velocity
+        #Step 2: Build quadtree for Barnes-Hut force calculation
+        root = QuadtreeNode(center=np.array([0, 0]), 
+                            half_size=self.bounds, 
+                            start_index=0, 
+                            end_index=len(self.particles), 
+                            particles=self.particles)
 
-        # Step 3: Update position using new velocity
+        #Step 3: Use Barnes-Hut force approximation
+        G = 1.0  # gravitational constant
         for p in self.particles:
-            p.pos += p.vel * dt
+            gravity_force = root.compute_force_on(p, theta=theta, G=G)
+            acc = gravity_force / p.mass
+            p.vel += acc * dt
+
+        #Step 4: Apply SPH pressure forces (if available)
+        for p in self.particles:
+            acc_pressure = p.pressure_force / p.mass
+            p.vel += acc_pressure * dt
+
+        #Step 5: Move particles based on updated velocity
+        for p in self.particles:
+            p.pos += p.vel * dt    
 
     @property
     def positions(self):
@@ -154,3 +167,12 @@ class GalaxyEngine:
         return np.array([p.pos for p in self.particles])
     
 
+def plot_starfield(positions, title="Starfield"):
+    plt.figure(figsize=(6, 6))
+    x = [p[0] for p in positions]
+    y = [p[1] for p in positions]
+    plt.scatter(x, y, s=0.5, color="white")
+    plt.title(title)
+    plt.gca().set_facecolor("black")
+    plt.gca().set_aspect("equal", adjustable="box")
+    plt.show()

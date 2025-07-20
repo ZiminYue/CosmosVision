@@ -1,11 +1,9 @@
-# sph_module.py
-
 import numpy as np
 
 class SPHModule:
     def __init__(self, h=10.0, k=100.0, rest_density=1.0):
-        self.h = h  # 核函数半径
-        self.k = k  # 压力常数
+        self.h = h  # Kernel function radius
+        self.k = k  # Pressure constant
         self.rest_density = rest_density
 
     def kernel_poly6(self, r, h):
