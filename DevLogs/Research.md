@@ -57,3 +57,7 @@
 ### August 3
 
 - Did some catching up based on the supervisor's feedback after the trip to get back on track
+
+### August 4
+
+- Did some catching up based on the supervisor's feedback, focusing on the future revision of the thesis
