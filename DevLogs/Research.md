@@ -52,3 +52,8 @@
 - Conducted literature research on technologies for motion capture and space art generation
 - Refined the 4th section of the literature review's main body
 - Completed literature review ver. 2
+
+
+### August 3
+
+- Did some catching up based on the supervisor's feedback after the trip to get back on track
