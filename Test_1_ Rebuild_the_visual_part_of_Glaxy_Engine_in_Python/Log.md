@@ -21,3 +21,7 @@
 2. Converted `slingshot.cpp` into `slingshot.py` and integrated it into `core.py`, enabling interactively launch particles by clicking and dragging, enabling real-time testing of motion dynamics and parameter effects.
 - Test output-05: ![Description](TestOutput/0720-02.gif)
 (Note: As pygame is used, run `python test.py` in terminal when want to have a try! `test.py` can be replaced with `test_animation.py` `test_slingshot.py` or `test_slingshot_boundary.py`)
+
+### August 6
+Make adjustment in `core.py` and create `test_glaxyShapr.py`, trying to create galaxy-like visual output with current code (but the output looks kind of weird right now).
+- Test output-06: ![Description](TestOutput/0906.gif)
