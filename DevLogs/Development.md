@@ -52,3 +52,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 ### July 20
 - Finished converting the rest files in `/physics` folder.
 - Created a simple interactive test demo.
+  
+### August 4-6
+- Tried to generate animated galaxies with existing code functions (see `tech work` branch).
