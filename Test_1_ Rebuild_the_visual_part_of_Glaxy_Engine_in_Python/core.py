@@ -118,9 +118,41 @@ class GalaxyEngine:
         """
         Initializes particles with random positions and masses within the simulation bounds.
         """
-        pos = np.random.uniform(-self.bounds, self.bounds, size=(count, 2))
-        mass = np.random.uniform(0.5, 1.5, size=count)
-        return [Particle(p, m, i) for i, (p, m) in enumerate(zip(pos, mass))]
+        return self.generate_spiral_galaxy(count)
+
+    def generate_spiral_galaxy(self, count, center=(0, 0), arms=2, spread=0.5, rotation_strength=1.0):
+        """
+        Generate a more natural spiral galaxy with curved arms and physically reasonable velocities.
+        """
+        particles = []
+
+        for i in range(count):
+            radius = np.random.exponential(scale=spread * self.bounds)
+            arm_angle = 2 * np.pi * arms * (radius / (spread * self.bounds))
+            angle_offset = np.random.normal(0, 0.4)
+            angle = arm_angle + angle_offset
+
+            x = radius * np.cos(angle) + center[0]
+            y = radius * np.sin(angle) + center[1]
+            pos = np.array([x, y])
+
+            # Vector from center to particle
+            rel_pos = pos - np.array(center)
+            r = np.linalg.norm(rel_pos) + 1e-5
+
+            # Use a more natural (Keplerian) rotational velocity
+            v_mag = rotation_strength / np.sqrt(r)
+            tangent = np.array([-rel_pos[1], rel_pos[0]]) / r
+            vel = v_mag * tangent
+
+            mass = np.random.uniform(0.5, 1.5)
+            p = Particle(pos, mass, i)
+            p.vel = vel
+
+            particles.append(p)
+
+        return particles
+
 
     def update(self, dt=0.1, theta=0.5, black_hole_mass=500):
         """
