@@ -25,3 +25,9 @@
 ### August 6
 Make adjustment in `core.py` and create `test_glaxyShape.py`, trying to create galaxy-like visual output with current code (but the output looks kind of weird right now).
 - Test output-06: ![Description](TestOutput/0806.gif)
+
+### August 7
+Make adjustment in `core.py` and `test_glaxyShape.py`, still trying to create galaxy-like visual output with current code. Integrated code from https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/ to make the distribution of the particles more galaxy-like. 
+
+But this version cannot generate animation correctly and ChatGPT failed to fix it (It asked me to repeatedly fix some pieces of the code and later changed it back) :(
+- Test output-06: ![Description](TestOutput/0807.png)
