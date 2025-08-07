@@ -8,16 +8,19 @@ class Particle:
     A simple particle object representing a star or mass point.
     Each particle has a position, mass, velocity, and net force.
     """
-    def __init__(self, pos, mass, index=None):
-        self.pos = np.array(pos, dtype=np.float64)   # 2D position
+    def __init__(self, pos, mass, vel=None, index=None):
+        # Force to expand into 3D vector
+        if len(pos) == 2:
+            pos = [pos[0], pos[1], 0.0]
+        self.pos = np.array(pos, dtype=np.float64)  # 3D position
         self.mass = mass                             # Scalar mass
         self.index = index                           # Optional index ID
-        self.force = np.zeros(2)                     # Net force acting on the particle
-        self.vel = np.zeros(2)                       # Current velocity
-         # SPH 
+        self.force = np.zeros(3)                     # Net force acting on the particle
+        self.vel = np.zeros(3)                       # Current velocity
+        # SPH
         self.density = 0.0
         self.pressure = 0.0
-        self.pressure_force = np.zeros(2) 
+        self.pressure_force = np.zeros(3)
 
 
 class QuadtreeNode:
@@ -28,13 +31,24 @@ class QuadtreeNode:
     min_leaf_size = 1e-3         # Smallest allowable node size (prevents infinite subdivision)
 
     def __init__(self, center, half_size, start_index, end_index, particles):
-        self.center = np.array(center, dtype=float)   # Center of the current quadrant
-        self.half_size = half_size                    # Half the width/height of the node
-        self.start_index = start_index                # Start index in the particle list
-        self.end_index = end_index                    # End index in the particle list
-        self.particles = particles                    # List of particle objects in this region
+        self.center = np.array(center, dtype=float)[:2]   # Force to 2D   # Center of the current quadrant
+        self.half_size = half_size                        # Half the width/height of the node
+        self.start_index = start_index                    # Start index in the particle list
+        self.end_index = end_index                        # End index in the particle list
+        self.particles = particles                        # List of particle objects in this region
 
-        self.mass = 0.0                               # Total mass of this node
+        # Initialize mass and center of mass position
+        # self.mass = 0.0
+        # weighted_pos_sum = np.zeros(2)  # ← Explicitly 2D
+
+        # for i in range(self.start_index, self.end_index):
+        #     p = self.particles[i]
+        #     weighted_pos_sum += p.mass * p.pos
+        #     self.mass += p.mass
+
+        # if self.mass > 0:
+        #     self.center_of_mass = weighted_pos_sum / self.mass
+
         self.center_of_mass = np.zeros(2)             # Center of mass for all particles in this node
         self.sub_grids = []                           # Children (subdivided) nodes
 
@@ -49,7 +63,7 @@ class QuadtreeNode:
         Calculates total mass and center of mass for a leaf node (no further subdivision).
         """
         mass_sum = 0.0
-        weighted_pos_sum = np.zeros(2)
+        weighted_pos_sum = np.zeros(3)
         for i in range(self.start_index, self.end_index):
             p = self.particles[i]
             mass_sum += p.mass
@@ -76,11 +90,15 @@ class QuadtreeNode:
         hs = self.half_size / 2
         for dx in [-hs, hs]:
             for dy in [-hs, hs]:
-                sub_center = self.center + np.array([dx, dy])
+                sub_center = self.center.copy()
+                sub_center[0] += dx
+                sub_center[1] += dy
+
                 sub_particles = [
-                        self.particles[i] for i in range(self.start_index, self.end_index)
-                        if np.all(np.abs(self.particles[i].pos - sub_center) < hs)
-                    ]
+                    self.particles[i] for i in range(self.start_index, self.end_index)
+                    if np.all(np.abs(self.particles[i].pos[:2] - sub_center[:2]) < hs)
+                ]
+
                 if sub_particles:
                     self.sub_grids.append(
                         QuadtreeNode(sub_center, hs, 0, len(sub_particles), sub_particles)
@@ -105,99 +123,93 @@ class QuadtreeNode:
 
 
 class GalaxyEngine:
-    """
-    The main simulation engine. Manages particles, updates their positions using gravitational forces,
-    and builds the quadtree structure each frame.
-    """
-    def __init__(self, count=1000, bounds=100):
+    def __init__(self, num_particles=300, bounds=100):
+        self.num_particles = num_particles
         self.bounds = bounds
-        self.particles = self.generate_particles(count)
-        self.sph = SPHModule(h=5.0)
 
-    def generate_particles(self, count):
-        """
-        Initializes particles with random positions and masses within the simulation bounds.
-        """
-        return self.generate_spiral_galaxy(count)
+        # Add missing constants
+        self.G = 1.0                # Gravitational constant (tweakable)
+        self.softening = 0.1        # Softening term to prevent divide-by-zero ←★ added this line
+        self.central_mass = 1000.0  # Mass of the galaxy center (higher = faster rotation)
 
-    def generate_spiral_galaxy(self, count, center=(0, 0), arms=2, spread=0.5, rotation_strength=1.0):
-        """
-        Generate a more natural spiral galaxy with curved arms and physically reasonable velocities.
-        """
-        particles = []
+        # Call initialization method
+        self.particles = self.generate_spiral_galaxy(arms=3)
 
-        for i in range(count):
-            radius = np.random.exponential(scale=spread * self.bounds)
-            arm_angle = 2 * np.pi * arms * (radius / (spread * self.bounds))
-            angle_offset = np.random.normal(0, 0.4)
-            angle = arm_angle + angle_offset
+    def generate_spiral_galaxy(self, arms=3):
+        self.particles = []
+        for i in range(self.num_particles):
+            # Distance
+            radius = np.random.normal(50, 15)
 
-            x = radius * np.cos(angle) + center[0]
-            y = radius * np.sin(angle) + center[1]
-            pos = np.array([x, y])
+            # Spiral angle + noise
+            arm = i % arms
+            theta = arm * (2 * np.pi / arms) + radius * 0.3 + np.random.normal(0, 0.2)
 
-            # Vector from center to particle
-            rel_pos = pos - np.array(center)
-            r = np.linalg.norm(rel_pos) + 1e-5
+            # 3D position (small perturbation in z direction)
+            x = radius * np.cos(theta)
+            y = radius * np.sin(theta)
+            z = np.random.normal(0, 2)  # Simulate disk thickness
 
-            # Use a more natural (Keplerian) rotational velocity
-            v_mag = rotation_strength / np.sqrt(r)
-            tangent = np.array([-rel_pos[1], rel_pos[0]]) / r
-            vel = v_mag * tangent
+            # Compute rotational velocity (simplified)
+            distance = np.sqrt(x**2 + y**2 + z**2)
+            speed = np.sqrt(self.G * self.central_mass / (distance + 1e-2))
+            vx = -speed * np.sin(theta)
+            vy = speed * np.cos(theta)
+            vz = 0
 
-            mass = np.random.uniform(0.5, 1.5)
-            p = Particle(pos, mass, i)
-            p.vel = vel
+            self.particles.append(Particle(
+                mass=np.random.uniform(1, 10),
+                pos=np.array([x, y, z], dtype=np.float32),
+                vel=np.array([vx, vy, vz], dtype=np.float32),
+            ))
 
-            particles.append(p)
+        return self.particles
 
-        return particles
+    def update(self, dt=1.0):
+        G = self.G
+        softening = self.softening
 
+        # Create projected_particles (2D copy) and mapping
+        projected_particles = []
+        particle_map = {}
 
-    def update(self, dt=0.1, theta=0.5, black_hole_mass=500):
-        """
-        Advance the simulation by one time step.
-
-        Args:
-            dt (float): Time step size.
-            theta (float): Barnes-Hut approximation threshold.
-            black_hole_mass (float): Mass of central black hole for gravitational pull.
-        """
-
-        #Step 1: Compute SPH-related densities and pressures (if used)
-        if self.sph is not None:
-            self.sph.compute_density_and_pressure(self.particles)
-
-        #Step 2: Build quadtree for Barnes-Hut force calculation
-        root = QuadtreeNode(center=np.array([0, 0]), 
-                            half_size=self.bounds, 
-                            start_index=0, 
-                            end_index=len(self.particles), 
-                            particles=self.particles)
-
-        #Step 3: Use Barnes-Hut force approximation
-        G = 1.0  # gravitational constant
         for p in self.particles:
-            gravity_force = root.compute_force_on(p, theta=theta, G=G)
-            acc = gravity_force / p.mass
-            p.vel += acc * dt
+            proj = Particle(
+                mass=p.mass,
+                pos=p.pos[:2].copy(),  # Only XY
+                vel=p.vel[:2].copy()
+            )
+            projected_particles.append(proj)
+            particle_map[id(proj)] = p
 
-        #Step 4: Apply SPH pressure forces (if available)
+        # Create quadtree (note: use 2D positions)
+        positions_2d = np.array([p.pos[:2] for p in self.particles])  # Extract x,y
+        center = np.mean(positions_2d, axis=0)                        # Compute centroid
+        half_size = np.max(np.abs(positions_2d - center)) * 1.5       # Max expansion
+
+        root_center = np.array([center[0], center[1], 0.0])  # Expand to 3D
+        root = QuadtreeNode(root_center, half_size, 0, len(self.particles), self.particles)
+
+        # Initialize forces to zero
         for p in self.particles:
-            acc_pressure = p.pressure_force / p.mass
-            p.vel += acc_pressure * dt
+            p.force[:] = 0.0
 
-        #Step 5: Move particles based on updated velocity
+        # For each projected particle, compute Barnes-Hut gravity and add to original particle
+        for proj in projected_particles:
+            force_2d = root.compute_force_on(proj, theta=0.5, G=G)
+            original = particle_map[id(proj)]
+            original.force[:2] = force_2d  # XY components
+            original.force[2] = 0          # Z component set to 0
+
+        # Update velocity and position using simple Euler integration
         for p in self.particles:
-            p.pos += p.vel * dt    
+            acceleration = p.force / p.mass
+            p.vel += acceleration * dt
+            p.pos += p.vel * dt
 
-    @property
-    def positions(self):
-        """
-        Returns current particle positions as a numpy array.
-        """
+    def get_positions(self):
         return np.array([p.pos for p in self.particles])
-    
+
 
 def plot_starfield(positions, title="Starfield"):
     plt.figure(figsize=(6, 6))
