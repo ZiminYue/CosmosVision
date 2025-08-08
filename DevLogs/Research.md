@@ -61,3 +61,7 @@
 ### August 4
 
 - Did some catching up based on the supervisor's feedback, focusing on the future revision of the thesis
+
+### August 7
+
+- Created Participant Information and Consent form based on the template
