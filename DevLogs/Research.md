@@ -66,6 +66,6 @@
 
 - Created Participant Information and Consent form based on the template
 
-### August 5
+### August 8
 
 - Refined the literature review (to ver 2.5) according to feedback
