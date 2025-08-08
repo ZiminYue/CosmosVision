@@ -32,5 +32,5 @@ Make adjustment in `core.py` and create `test_glaxyShape.py`, trying to create g
 But this version cannot generate animation correctly and ChatGPT failed to fix it (It asked me to repeatedly fix some pieces of the code and later changed it back) :(
 - Test output-07: ![Description](TestOutput/0807.png)
 
-2. Then I asked Claude to analyze and fix the bugs in `core.py` and `test_glaxyShape.py`. Finally we have a spinning spiral galaxy! (Yet still looks a bit weird)
+2. Then I asked Claude to analyze and fix the bugs in `core.py` and `test_glaxyShape.py`. Finally we have a spinning spiral galaxy! (Yet still looks a bit weird as time goes by. However it's good to see something like this so far!)
 - Test output-08: ![Description](TestOutput/0807-02.gif)
