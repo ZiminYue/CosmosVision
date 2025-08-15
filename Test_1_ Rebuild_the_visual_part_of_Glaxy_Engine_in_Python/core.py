@@ -136,19 +136,19 @@ class QuadtreeNode:
 
 
 class GalaxyEngine:
-    def __init__(self, num_particles=300, bounds=100):
+    def __init__(self, num_particles=600, bounds=100):
         self.num_particles = num_particles
         self.bounds = bounds
 
         # Adjust physical parameters for better rotation effects
         self.G = 2.0                # Increase gravitational constant to enhance cohesion
         self.softening = 0.5        # Moderate softening to avoid excessive perturbation
-        self.central_mass = 2000.0  # Increase central mass to enhance rotation
+        self.central_mass = 1000.0  # Increase central mass to enhance rotation
 
         # Fix: Pass parameters when calling
-        self.particles = self.generate_spiral_galaxy(arms=3)
+        self.particles = self.generate_spiral_galaxy(arms=5)
 
-    def generate_spiral_galaxy(self, arms=3):
+    def generate_spiral_galaxy(self, arms=5):
         """Generate spiral galaxy structure"""
         particles = []
         for i in range(self.num_particles):
@@ -182,8 +182,8 @@ class GalaxyEngine:
             radial_speed = 0.02 * np.sin(2 * spiral_angle)
             
             # Calculate velocity components
-            vx = -speed * np.sin(theta) + radial_speed * np.cos(theta)
-            vy = speed * np.cos(theta) + radial_speed * np.sin(theta)
+            vx = speed * np.sin(theta) + radial_speed * np.cos(theta)
+            vy = -speed * np.cos(theta) + radial_speed * np.sin(theta)
             vz = np.random.normal(0, 0.05)  # ery small z-direction velocity
 
             particles.append(Particle(
@@ -213,11 +213,11 @@ class GalaxyEngine:
         for p in self.particles:
             p.force[:] = 0.0
 
-        # Gravity Calculation
+        # Calculate gravitational forces
         for p in self.particles:
-            # Barnes-Hut gravity (among particles)
-            force_2d = root.compute_force_on(p, theta=0.8, G=G, eps=softening)  # Reduce precision to minimize perturbation
-            p.force[:2] += force_2d * 0.5  # Reduce inter-particle gravitational influence
+            # Barnes-Hut gravity (inter-particle) - reduce influence to avoid disruption
+            force_2d = root.compute_force_on(p, theta=0.8, G=G, eps=softening)  
+            p.force[:2] += force_2d * 0.1  # Further reduce inter-particle influence
             
             # Central black hole gravity - main source of centripetal force
             r_center = np.linalg.norm(p.pos[:2]) + softening
@@ -225,22 +225,30 @@ class GalaxyEngine:
             central_force_dir = -p.pos[:2] / r_center
             p.force[:2] += central_force_mag * central_force_dir
             
-            # Restoring force in Z direction (maintaining disk structure)
-            p.force[2] += -2.0 * p.pos[2] - 0.5 * p.vel[2]  # Enhance disk constraint
+            # Z-direction restoring force (maintain disk structure) - fix the "bump" issue
+            z_distance = abs(p.pos[2])
+            if z_distance > 0.1:  # Only apply strong force when far from plane
+                z_restoring = -5.0 * p.pos[2] - 1.0 * p.vel[2]  # Strong planar constraint
+            else:
+                z_restoring = -0.5 * p.pos[2] - 0.2 * p.vel[2]  # Gentle constraint near plane
+            p.force[2] += z_restoring
             
-            # Add damping to stabilize system (simulate interstellar medium drag)
+            # Add gentle damping to stabilize system (simulate interstellar medium drag)
+            p.force[:2] += -0.002 * p.vel[:2]  # Reduced damping
 
-            p.force[:2] += -0.01 * p.vel[:2]
-
-        # Update speed and position
+        # Update velocity and position
         for p in self.particles:
             acceleration = p.force / p.mass
             p.vel += acceleration * dt
             
-            # Limit maximum speed to prevent system instability
-            speed = np.linalg.norm(p.vel)
-            if speed > 20:  # Speed limit
-                p.vel *= 20 / speed
+            # Limit maximum velocity to prevent system instability
+            speed_2d = np.linalg.norm(p.vel[:2])
+            if speed_2d > 15:  # 2D velocity limit
+                p.vel[:2] *= 15 / speed_2d
+            
+            # Separate limit for z-velocity to prevent "bump"
+            if abs(p.vel[2]) > 2:  # Much stricter z-velocity limit
+                p.vel[2] = np.sign(p.vel[2]) * 2
                 
             p.pos += p.vel * dt
             
