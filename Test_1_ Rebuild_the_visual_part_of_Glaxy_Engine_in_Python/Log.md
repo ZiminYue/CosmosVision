@@ -34,3 +34,7 @@ But this version cannot generate animation correctly and ChatGPT failed to fix i
 
 2. Then I asked Claude to analyze and fix the bugs in `core.py` and `test_glaxyShape.py`. Finally we have a spinning spiral galaxy! (Yet still looks a bit weird as time goes by. However it's good to see something like this so far!)
 - Test output-08: ![Description](TestOutput/0807-02.gif)
+
+### August 15
+Make adjustment in `core.py` and create `test_glaxyShape.py`, fixed the spinning direction.
+- Test output-09: ![Description](TestOutput/0815.gif)
