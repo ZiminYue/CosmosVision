@@ -57,4 +57,7 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 - Tried to generate animated galaxies with existing code functions (see `tech work` branch).
 
 ### August 7
-- Succeed in creating a spinning spiral galaxy, integrating code from https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/ (see `tech work` branch). Adjustment required, though.
+- Succeeded in creating a spinning spiral galaxy, integrating code from https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/ (see `tech work` branch). Adjustment required, though.
+
+### August 15
+- Adjusted code for generating spinning spiral galaxy, and tested the collision of multiple galaxies (Physical calculation effect is not obvious, and the animation is SLOW).
