@@ -36,5 +36,8 @@ But this version cannot generate animation correctly and ChatGPT failed to fix i
 - Test output-08: ![Description](TestOutput/0807-02.gif)
 
 ### August 15
-Make adjustment in `core.py` and create `test_glaxyShape.py`, fixed the spinning direction.
+1. Make adjustment in `core.py` and `test_glaxyShape.py`, fixed the spinning direction.
 - Test output-09: ![Description](TestOutput/0815.gif)
+
+2. Make adjustment in `core.py`, enabling SPH module. Then created `test_multiple_galaxies.py` to see the visual effects produced by the collision of multiple galaxies. However the animation is VERY SLOW (the gif here is 500% of original speed).
+- Test output-10: ![Description](TestOutput/0815-02.gif)
