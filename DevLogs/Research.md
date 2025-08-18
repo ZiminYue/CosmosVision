@@ -53,7 +53,6 @@
 - Refined the 4th section of the literature review's main body
 - Completed literature review ver. 2
 
-
 ### August 3
 
 - Did some catching up based on the supervisor's feedback after the trip to get back on track
@@ -69,3 +68,7 @@
 ### August 8
 
 - Refined the literature review (to ver 2.5) according to feedback
+
+### August 18
+
+- Read some MSc Written Thesis Examples and refined my methodology section
