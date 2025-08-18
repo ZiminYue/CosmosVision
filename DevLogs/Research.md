@@ -71,4 +71,4 @@
 
 ### August 18
 
-- Read some MSc Written Thesis Examples and refined my methodology section
+- Read some UAL MSc Written Thesis Examples and refined my methodology section
