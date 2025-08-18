@@ -61,3 +61,7 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### August 15
 - Adjusted code for generating spinning spiral galaxy, and tested the collision of multiple galaxies (Physical calculation effect is not obvious, and the animation is SLOW).
+
+
+### August 18
+- Reached out to a technician to check the code implementation.
