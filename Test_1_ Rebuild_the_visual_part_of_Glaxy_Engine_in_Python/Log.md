@@ -1,3 +1,7 @@
+## Python Version
+
+Current Version: Python 3.12.7
+
 ### July 18
 
 1. Converted `physics.cpp` into `core.py`.
