@@ -27,11 +27,11 @@ Current Version: Python 3.12.7
 (Note: As pygame is used, run `python test.py` in terminal when want to have a try! `test.py` can be replaced with `test_animation.py` `test_slingshot.py` or `test_slingshot_boundary.py`)
 
 ### August 6
-Make adjustment in `core.py` and create `test_glaxyShape.py`, trying to create galaxy-like visual output with current code (but the output looks kind of weird right now).
+Made adjustment in `core.py` and created `test_glaxyShape.py`, trying to create galaxy-like visual output with current code (but the output looks kind of weird right now).
 - Test output-06: ![Description](TestOutput/0806.gif)
 
 ### August 7
-1. Make adjustment in `core.py` and `test_glaxyShape.py`, still trying to create galaxy-like visual output with current code. Integrated code from https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/ to make the distribution of the particles more galaxy-like. 
+1. Made adjustment in `core.py` and `test_glaxyShape.py`, still trying to create galaxy-like visual output with current code. Integrated code from https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/ to make the distribution of the particles more galaxy-like. 
 
 But this version cannot generate animation correctly and ChatGPT failed to fix it (It asked me to repeatedly fix some pieces of the code and later changed it back) :(
 - Test output-07: ![Description](TestOutput/0807.png)
@@ -40,8 +40,17 @@ But this version cannot generate animation correctly and ChatGPT failed to fix i
 - Test output-08: ![Description](TestOutput/0807-02.gif)
 
 ### August 15
-1. Make adjustment in `core.py` and `test_glaxyShape.py`, fixed the spinning direction.
+1. Made adjustment in `core.py` and `test_glaxyShape.py`, fixed the spinning direction.
 - Test output-09: ![Description](TestOutput/0815.gif)
 
-2. Make adjustment in `core.py`, enabling SPH module. Then created `test_multiple_galaxies.py` to see the visual effects produced by the collision of multiple galaxies. However the animation is VERY SLOW (the gif here is 500% of original speed).
+2. Made adjustment in `core.py`, enabling SPH module. Then created `test_multiple_galaxies.py` to see the visual effects produced by the collision of multiple galaxies. However the animation is VERY SLOW (the gif here is 500% of original speed).
 - Test output-10: ![Description](TestOutput/0815-02.gif)
+
+### August 23
+Make adjustment in `core.py` and created `vispy_demo.py`, replacing the Matplotlib-based rendering with VisPy (`pip install Vispy` needed). Added a cloud of praticles in the center of the galaxy.
+
+Pros:
+Now it is possible to smoothly render 3D output with thousands of practicles.
+Cons:
+It should be animated, but everything's frozen in this version.
+- Test output-09: ![Description](TestOutput/0823.gif)
