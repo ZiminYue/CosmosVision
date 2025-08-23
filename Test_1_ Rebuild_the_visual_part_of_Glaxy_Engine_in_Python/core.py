@@ -1,4 +1,5 @@
 import numpy as np
+from sph_module import SPHModule
 import matplotlib.pyplot as plt
 
 class Particle:
@@ -136,7 +137,7 @@ class QuadtreeNode:
 
 
 class GalaxyEngine:
-    def __init__(self, num_particles=600, bounds=100):
+    def __init__(self, num_particles=100, bounds=100):
         self.num_particles = num_particles
         self.bounds = bounds
 
@@ -148,12 +149,16 @@ class GalaxyEngine:
         # Fix: Pass parameters when calling
         self.particles = self.generate_spiral_galaxy(arms=5)
 
+         # Add SPH module for gas dynamics
+        self.sph = SPHModule(h=15.0, k=50.0, rest_density=0.8)
+        self.use_sph = True  # Toggle SPH effects
+
     def generate_spiral_galaxy(self, arms=5):
         """Generate spiral galaxy structure"""
         particles = []
         for i in range(self.num_particles):
             # Distance - use more reasonable distribution, concentrated at medium radius
-            radius = max(8, np.random.gamma(2, 15))  # More concentrated distribution
+            radius = max(1, np.random.gamma(2, 15))  # More concentrated distribution
             
             # Spiral angle - enhance spiral structure
             arm = i % arms
@@ -192,6 +197,18 @@ class GalaxyEngine:
                 vel=[vx, vy, vz],
             ))
             
+
+            # Add core particles to light up the center
+            num_core = 100 # Total number of core particles
+            for _ in range(num_core):
+            # The larger the radius r, the lower the probability, exponential distribution
+                r = np.random.exponential(scale=1.0) # Scale controls the distribution range
+                theta = np.random.uniform(0, 2*np.pi)
+                z = np.random.normal(0, 0.5) # Small perturbation in the z direction
+                x = r * np.cos(theta)
+                y = r * np.sin(theta)
+                particles.append(Particle(mass=1.5, pos=[x, y, z]))
+
         return particles
 
     def update(self, dt=0.1):
@@ -217,7 +234,7 @@ class GalaxyEngine:
         for p in self.particles:
             # Barnes-Hut gravity (inter-particle) - reduce influence to avoid disruption
             force_2d = root.compute_force_on(p, theta=0.8, G=G, eps=softening)  
-            p.force[:2] += force_2d * 0.1  # Further reduce inter-particle influence
+            p.force[:2] += force_2d * 0.03  # Further reduce inter-particle influence
             
             # Central black hole gravity - main source of centripetal force
             r_center = np.linalg.norm(p.pos[:2]) + softening
@@ -255,6 +272,22 @@ class GalaxyEngine:
             # Boundary handling
             if np.linalg.norm(p.pos[:2]) > self.bounds * 1.5:
                 p.pos[:2] *= 0.95
+
+         # Add SPH calculations if enabled
+        if self.use_sph and len(self.particles) > 0:
+            # Convert 3D particles to 2D for SPH (SPH expects 2D pos)
+            for p in self.particles:
+                p.pos_2d_backup = p.pos.copy()  # Backup
+                p.pos = p.pos[:2]  # Temporarily use 2D
+            
+            # Compute SPH forces
+            self.sph.compute_density_and_pressure(self.particles)
+            self.sph.compute_pressure_forces(self.particles)
+            
+            # Restore 3D positions and add SPH forces
+            for p in self.particles:
+                p.pos = p.pos_2d_backup  # Restore 3D
+                p.force[:2] += p.pressure_force  # Add pressure force to XY
 
     def get_positions(self):
         """Get all particle positions"""
