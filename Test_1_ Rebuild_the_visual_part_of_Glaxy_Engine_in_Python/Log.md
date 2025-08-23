@@ -47,7 +47,7 @@ But this version cannot generate animation correctly and ChatGPT failed to fix i
 - Test output-10: ![Description](TestOutput/0815-02.gif)
 
 ### August 23
-Make adjustment in `core.py` and created `vispy_demo.py`, replacing the Matplotlib-based rendering with VisPy (`pip install Vispy` needed). Added a cloud of praticles in the center of the galaxy.
+Make adjustment in `core.py` and created `vispy_demo.py`, replacing the Matplotlib-based rendering with VisPy (`pip install Vispy` needed). Added a cloud of particles in the center of the galaxy.
 
 Pros:
 Now it is possible to smoothly render 3D output with thousands of practicles.
