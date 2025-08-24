@@ -62,9 +62,10 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 ### August 15
 - Adjusted code for generating spinning spiral galaxy, and tested the collision of multiple galaxies (Physical calculation effect is not obvious, and the animation is SLOW).
 
-
 ### August 18
 - Reached out to a technician to check the code implementation.
 
 ### August 23-24
-- Replaced the Matplotlib-based rendering with VisPy under LLMs' assistance, allowing the render of a large number of particles much more smoothly. (But the galaxy cannot be animated. Tried to fix it for a long time but failed.)
+- Replaced the Matplotlib-based rendering with VisPy under LLMs' assistance, allowing the render of a large number of particles much more smoothly. 
+- Edited the code for a long time, finally get the galaxy animated again (with lagging).
+- Highlighted potentially useful parameters for later development
