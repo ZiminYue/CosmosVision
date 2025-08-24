@@ -55,3 +55,7 @@ Now it is possible to smoothly render 3D output with thousands of practicles.
 Cons:
 It should be animated, but everything's frozen in this version.
 - Test output-11: ![Description](TestOutput/0823.gif)
+
+### August 24
+Make adjustment in `core.py` and created `vispy_demo.py`, improved the visual output, but still not moving at all xp
+- Test output-12: ![Description](TestOutput/0824.gif)
