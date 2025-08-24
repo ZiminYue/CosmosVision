@@ -189,14 +189,6 @@ class GalaxyEngine:
             for p in self.particles:
                 p.force[:2] += p.pressure_force[:2]
 
-        # === Global hard rotation, ensuring the galaxy rotates around the Z axis ===
-        omega = 0.2  # Rotation speed
-        cos_w, sin_w = np.cos(omega*dt), np.sin(omega*dt)
-        for p in self.particles:
-            x, y = p.pos[0], p.pos[1]
-            p.pos[0] = cos_w * x - sin_w * y
-            p.pos[1] = sin_w * x + cos_w * y
-
     def get_positions(self):
         return np.array([p.pos for p in self.particles])
     
