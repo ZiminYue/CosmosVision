@@ -77,7 +77,7 @@ class QuadtreeNode:
                 sub_center = self.center + np.array([dx, dy])
                 self.sub_grids.append(QuadtreeNode(sub_center, hs, 0, len(pts), pts))
 
-    def compute_force_on(self, particle, theta=0.5, G=1.0, eps=1e-1):
+    def compute_force_on(self, particle, theta=0.8, G=1.0, eps=1e-1):
         dx = self.center_of_mass - particle.pos[:2]
         dist = np.linalg.norm(dx) + eps
         if not self.sub_grids or self.half_size / dist < theta:
@@ -98,15 +98,17 @@ class GalaxyEngine:
         self.particles = self.generate_spiral_galaxy(arms=5)
         self.sph = SPHModule(h=15.0, k=50.0, rest_density=0.8)
         self.use_sph = True
+        self.sph_interval = 10      # Calculate SPH every 10 frames
+        self._step = 0 
 
     def generate_spiral_galaxy(self, arms=5):
         particles = []
         for i in range(self.num_particles):
-            radius = max(1, np.random.gamma(2, 15))
+            radius = max(0.1, np.random.gamma(2, 5)) # USEFUL PARAMETER: bigger -> more hollow in center, bigger -> more concentrated, bigger -> greater scale
             arm = i % arms
             base_angle = arm * (2 * np.pi / arms)
-            spiral_angle = radius * 0.08
-            noise = np.random.normal(0, 0.15)
+            spiral_angle = radius * 0.1
+            noise = np.random.normal(0, 0.15) # USEFUL PARAMETER: bigger -> "fatter" the arms
             theta = base_angle + spiral_angle + noise
             x = radius * np.cos(theta)
             y = radius * np.sin(theta)
@@ -123,9 +125,9 @@ class GalaxyEngine:
             particles.append(Particle(mass=np.random.uniform(0.8, 1.5), pos=[x, y, z], vel=[vx, vy, vz]))
 
         # Light up the center
-        num_core = 800
+        num_core = 100
         for _ in range(num_core):
-            r = np.random.exponential(scale=13) #Bigger number, wider range
+            r = np.random.exponential(scale=13) # USEFUL PARAMETER: Bigger -> wider range of center stars
             theta = np.random.uniform(0, 2*np.pi)
             z = np.random.normal(0, 0.5)
             x = r * np.cos(theta)
@@ -136,11 +138,11 @@ class GalaxyEngine:
             vz = np.random.normal(0, 0.05)
             particles.append(Particle(mass=1.5, pos=[x, y, z]))
         # Give all particles an initial rotation speed
-        omega = 10  
+        omega = 15  # USEFUL PARAMETER: bigger -> faster spanning
         for p in particles:
             x, y = p.pos[0], p.pos[1]
-            p.vel[0] += -omega * y
-            p.vel[1] += omega * x
+            p.vel[0] += omega * y
+            p.vel[1] += -omega * x
         return particles
 
     def update(self, dt=0.1):
@@ -149,45 +151,67 @@ class GalaxyEngine:
         if not self.particles:
             return
 
+        # ====== Clear forces ======
+        for p in self.particles:
+            p.force[:] = 0.0
+
+        # ====== Barnes-Hut gravity + central black hole + damping/thickness ======
         positions_2d = np.array([p.pos[:2] for p in self.particles])
         center = np.mean(positions_2d, axis=0)
         half_size = max(np.max(np.abs(positions_2d - center)) * 1.2, 1.0)
         root = QuadtreeNode(center, half_size, 0, len(self.particles), self.particles)
 
         for p in self.particles:
-            p.force[:] = 0.0
-            # Barnes-Hut inter-particle
+            # Gravitational force between particles
             force_2d = root.compute_force_on(p, theta=0.8, G=G, eps=softening)
             p.force[:2] += force_2d * 0.8
-            # Central mass
+
+            # Central black hole attraction
             r_center = np.linalg.norm(p.pos[:2]) + softening
-            central_force_mag = G * self.central_mass / ((r_center**2) + 1.0)
+            central_force_mag = G * self.central_mass / ((r_center**2) + 100)
             central_force_dir = -p.pos[:2] / r_center
             p.force[:2] += central_force_mag * central_force_dir
-            # Z restoring
-            z_restoring = -0.01 * p.pos[2] - 0.005 * p.vel[2]
-            p.force[2] += z_restoring
-            # gentle damping
-            p.force[:2] += -0.002 * p.vel[:2]
 
-        # Update velocity & position
+            # Disk thickness restoration + slight damping
+            p.force[2] += (-0.001 * p.pos[2] - 0.005 * p.vel[2])
+            p.force[:2] += -0.001 * p.vel[:2]
+
+        # ====== SPH (2D, perturbation) ======
+        if self.use_sph and (self._step % self.sph_interval == 0):
+            backup_pos = [p.pos.copy() for p in self.particles]
+            try:
+                for p in self.particles:
+                    p.pos = p.pos[:2].copy()  # Temporary 2D
+                self.sph.compute_density_and_pressure(self.particles)
+                self.sph.compute_pressure_forces(self.particles)
+
+                for p in self.particles:
+                    pf_xy = np.array(p.pressure_force[:2], dtype=np.float64)
+                    pf_xy *= 0.02  # Reduce pressure force influence, slight rotation perturbation
+                    p.force[:2] += pf_xy
+            finally:
+                for p, pos in zip(self.particles, backup_pos):
+                    p.pos = pos
+
+        # ====== Integration ======
         for p in self.particles:
             acc = p.force / p.mass
             p.vel += acc * dt
-            # limit 2D velocity
-            speed2d = np.linalg.norm(p.vel[:2])
-            if speed2d > 15: p.vel[:2] *= 15 / speed2d
-            if abs(p.vel[2]) > 2: p.vel[2] = np.sign(p.vel[2]) * 2
             p.pos += p.vel * dt
+
+            # Speed limit protection, only clip abnormal values
+            speed2d = np.linalg.norm(p.vel[:2])
+            if speed2d > 15:  # Don't clip normal rotation speed
+                p.vel[:2] *= 15 / speed2d
+            if abs(p.vel[2]) > 10:
+                p.vel[2] = np.sign(p.vel[2]) * 10
+
+            # Boundaries
             if np.linalg.norm(p.pos[:2]) > self.bounds * 1.5:
                 p.pos[:2] *= 0.95
 
-        # SPH update
-        if self.use_sph:
-            self.sph.compute_density_and_pressure(self.particles)
-            self.sph.compute_pressure_forces(self.particles)
-            for p in self.particles:
-                p.force[:2] += p.pressure_force[:2]
+        self._step += 1
+
 
     def get_positions(self):
         return np.array([p.pos for p in self.particles])

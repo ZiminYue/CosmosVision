@@ -2,8 +2,8 @@ import numpy as np
 
 class SPHModule:
     def __init__(self, h=10.0, k=100.0, rest_density=1.0):
-        self.h = h  # Kernel function radius
-        self.k = k  # Pressure constant
+        self.h = h
+        self.k = k
         self.rest_density = rest_density
 
     def kernel_poly6(self, r, h):
@@ -21,7 +21,9 @@ class SPHModule:
         for pi in particles:
             density = 0.0
             for pj in particles:
-                r = np.linalg.norm(pi.pos - pj.pos)
+                # Only use XY plane to calculate distance
+                r_vec_xy = pi.pos[:2] - pj.pos[:2]
+                r = np.linalg.norm(r_vec_xy)
                 if r < self.h:
                     density += pj.mass * self.kernel_poly6(r, self.h)
             pi.density = density
@@ -29,13 +31,17 @@ class SPHModule:
 
     def compute_pressure_forces(self, particles):
         for pi in particles:
-            pressure_force = np.zeros(2)
+            pressure_force = np.zeros(3)
             for pj in particles:
                 if pi is pj:
                     continue
-                r_vec = pi.pos - pj.pos
-                r = np.linalg.norm(r_vec)
+                # XY plane vector
+                r_vec_xy = pi.pos[:2] - pj.pos[:2]
+                r = np.linalg.norm(r_vec_xy)
                 if r < self.h and pj.density > 0:
                     pressure_term = (pi.pressure + pj.pressure) / (2 * pj.density)
-                    pressure_force -= pj.mass * pressure_term * self.kernel_spiky_grad(r_vec, self.h)
+                    # Return 2D force
+                    f_xy = -pj.mass * pressure_term * self.kernel_spiky_grad(r_vec_xy, self.h)
+                    # Map to first two dimensions of 3D
+                    pressure_force[:2] += f_xy
             pi.pressure_force = pressure_force
