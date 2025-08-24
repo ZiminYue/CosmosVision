@@ -11,9 +11,9 @@ print("=== Galaxy Visualization ===")
 # ========================
 print("Initializing galaxy engine...")
 galaxy = GalaxyEngine(num_particles=6000)
-galaxy.central_mass *= 2.0  # 强化中心引力
+galaxy.central_mass *= 2.0  # Strengthen central gravity
 
-# 初始化旋转速度
+# Initialize rotation speed
 for p in galaxy.particles:
     r_vec = p.pos[:2]
     r_mag = np.linalg.norm(r_vec) + 1e-5
