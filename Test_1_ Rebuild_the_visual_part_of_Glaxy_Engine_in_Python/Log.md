@@ -61,3 +61,7 @@ It should be animated, but everything's frozen in this version.
 - Test output-12: ![Description](TestOutput/0824.gif)
   
 2. Made adjustment in `core.py` and created `test_physics.py`, `test_vispy_singleThread.py`, trying to check why the animation is not working. (When running `test_vispy_singleThread.py`, the galaxy starts moving, but could only move a liitle per many seconds)
+
+3. Updated `core.py`, `sph_module.py` and `vispy_demo.py`, highlighting potentially useful parameters. Finally able to generate animated (but lagging) galaxy again!
+- Test output-13: ![Description](TestOutput/0824-02.gif)
+
