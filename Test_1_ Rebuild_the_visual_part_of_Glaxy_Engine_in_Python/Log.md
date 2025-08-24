@@ -47,7 +47,7 @@ But this version cannot generate animation correctly and ChatGPT failed to fix i
 - Test output-10: ![Description](TestOutput/0815-02.gif)
 
 ### August 23
-Make adjustment in `core.py` and created `vispy_demo.py`, replacing the Matplotlib-based rendering with VisPy (`pip install Vispy` needed). Added a cloud of particles in the center of the galaxy.
+Made adjustment in `core.py` and created `vispy_demo.py`, replacing the Matplotlib-based rendering with VisPy (`pip install Vispy` needed). Added a cloud of particles in the center of the galaxy.
 
 Pros:
 Now it is possible to smoothly render 3D output with thousands of practicles.
@@ -57,5 +57,7 @@ It should be animated, but everything's frozen in this version.
 - Test output-11: ![Description](TestOutput/0823.gif)
 
 ### August 24
-Make adjustment in `core.py` and `vispy_demo.py`, improved the visual output, but still not moving at all xp
+1. Made adjustment in `core.py` and `vispy_demo.py`, improved the visual output, but still not moving at all xp
 - Test output-12: ![Description](TestOutput/0824.gif)
+  
+2. Made adjustment in `core.py` and created `test_physics.py`, `test_vispy_singleThread.py`, trying to check why the animation is not working. (When running `test_vispy_singleThread.py`, the galaxy starts moving, but could only move a liitle per many seconds)
