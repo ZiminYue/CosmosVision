@@ -65,3 +65,7 @@ It should be animated, but everything's frozen in this version.
 3. Updated `core.py`, `sph_module.py` and `vispy_demo.py`, highlighting potentially useful parameters. Finally able to generate animated (but lagging) galaxy again!
 - Test output-13: ![Description](TestOutput/0824-02.gif)
 
+### August 24
+1. Updated `vispy_demo.py` with loading time detecter code, found that the lagging was caused by SPH module.
+- Debug info: ![Description](Debugs/0825-SPHLagging.png)
+
