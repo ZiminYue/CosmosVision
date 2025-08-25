@@ -95,7 +95,7 @@ Updated `vispy_demo.py` with loading time detecting code, found that the lagging
    ```
    
    - Implemented `_gpu_build_from_particles()` to upload particle data to GPU, and `_gpu_push_to_particles()` to fetch results back to CPU for rendering.
-   - 
+    
    (4) GPU N² update
 
    - `_update_gpu_n2(self, dt)` computes pairwise gravity on GPU with central mass, damping, and velocity/boundary constraints.
