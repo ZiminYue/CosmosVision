@@ -66,6 +66,6 @@ It should be animated, but everything's frozen in this version.
 - Test output-13: ![Description](TestOutput/0824-02.gif)
 
 ### August 24
-1. Updated `vispy_demo.py` with loading time detecter code, found that the lagging was caused by SPH module.
+1. Updated `vispy_demo.py` with loading time detecting code, found that the lagging was caused by SPH module.
 - Debug info: ![Description](Debugs/0825-SPHLagging.png)
 
