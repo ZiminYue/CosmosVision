@@ -4,7 +4,9 @@ import numpy as np
 import time
 
 # Initialize galaxy
-galaxy = GalaxyEngine(num_particles=900)
+galaxy = GalaxyEngine(num_particles=1500)
+galaxy.use_gpu = True    # GPU
+galaxy.use_sph = True   # SPH
 galaxy.central_mass *= 2.0
 
 positions = galaxy.get_positions()
@@ -51,7 +53,7 @@ def update(ev):
     total_time = (t3 - t0) * 1000
     fps = 1000.0 / total_time if total_time > 0 else 0
 
-    print(f"[DEBUG] Frame {frame_count}: Update={update_time:.2f} ms, Render={render_time:.2f} ms, Total={total_time:.2f} ms ({fps:.1f} FPS)")
+    #print(f"[DEBUG] Frame {frame_count}: Update={update_time:.2f} ms, Render={render_time:.2f} ms, Total={total_time:.2f} ms ({fps:.1f} FPS)")
 
-timer = app.Timer(interval=1/30.0, connect=update, start=True)
+timer = app.Timer(interval=1/60.0, connect=update, start=True)
 app.run()

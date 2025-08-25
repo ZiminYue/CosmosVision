@@ -1,135 +1,98 @@
+from vispy import app, scene
+from core import GalaxyEngine
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-from core import GalaxyEngine, Particle
+import time
 
-# Create an empty engine
-engine = GalaxyEngine(num_particles=0)  # Create empty engine first
-engine.particles = []  # Clear particle list
+# ----------------------------
+# Initialize two galaxies
+# ----------------------------
+gal1 = GalaxyEngine(num_particles=1600)
+gal1.use_gpu = True
+gal1.use_sph = True
+gal1.central_mass *= 5.0
 
-# Function to manually add multiple galaxies
-def create_mini_galaxy(center, velocity, num_particles=120, arms=3):
-    """Create a small galaxy - maintain spiral arm structure"""
-    particles = []
-    for i in range(num_particles):
-        # Distance distribution - more like original version
-        radius = max(5, np.random.gamma(2, 15))
-        
-        # Spiral angle - use original version parameters
-        arm = i % arms
-        base_angle = arm * (2 * np.pi / arms)
-        spiral_angle = radius * 0.08  # Same spiral winding as original
-        noise = np.random.normal(0, 0.15)  # Same noise as original
-        theta = base_angle + spiral_angle + noise
-        
-        # Relative position (relative to galaxy center)
-        x_rel = radius * np.cos(theta)
-        y_rel = radius * np.sin(theta)
-        z_rel = np.random.normal(0, 1.5)  # Same disk thickness as original
-        
-        # Absolute position (add galaxy center offset)
-        x = x_rel + center[0]
-        y = y_rel + center[1]
-        z = z_rel + (center[2] if len(center) > 2 else 0)
-        
-        # Local rotation velocity - use original velocity calculation
-        distance_2d = np.sqrt(x_rel**2 + y_rel**2)
-        
-        if distance_2d < 10:
-            # Interior: rigid body rotation
-            local_speed = distance_2d * 0.15  
-        else:
-            # Exterior: flat rotation curve
-            local_speed = np.sqrt(engine.G * 1000.0 / (distance_2d + 5)) * 1.2
-        
-        # Radial velocity component
-        radial_speed = 0.02 * np.sin(2 * spiral_angle)
-        
-        # Local velocity - clockwise rotation
-        vx_local = local_speed * np.sin(theta) + radial_speed * np.cos(theta)
-        vy_local = -local_speed * np.cos(theta) + radial_speed * np.sin(theta)
-        vz_local = np.random.normal(0, 0.05)
-        
-        # Total velocity = local rotation + galaxy bulk motion
-        vx = vx_local + velocity[0]
-        vy = vy_local + velocity[1]
-        vz = vz_local + (velocity[2] if len(velocity) > 2 else 0)
-        
-        particles.append(Particle(
-            mass=np.random.uniform(0.8, 1.5),  # Same mass range as original
-            pos=[x, y, z],
-            vel=[vx, vy, vz],
-        ))
+gal2 = GalaxyEngine(num_particles=1500)
+gal2.use_gpu = True
+gal2.use_sph = True
+gal2.central_mass *= 2.0
+
+# Shift initial positions and give relative velocities
+for p in gal1.particles:
+    p.pos += np.array([0, -30, 0]) # initial position
+    p.vel += np.array([0, 8, 0])   # moving direction
+for p in gal2.particles:
+    p.pos += np.array([20, 0, 0])
+    p.vel += np.array([-5, 0, 0])  
+
+    ## Collision from different dimensions
+    # x, y, z = p.pos
+    # vx, vy, vz = p.vel
+    # p.pos = np.array([x, z, y])  # Shift Y <-> Z
+    # p.vel = np.array([vx, vz, vy])  
+    # p.pos += np.array([30, 0, 0])   
+    # p.vel += np.array([-0.5, 0, 0]) 
+
+# ----------------------------
+# Combine particles and set colors
+# ----------------------------
+def get_positions_colors(gal1, gal2):
+    pos1 = gal1.get_positions()
+    pos2 = gal2.get_positions()
+    positions = np.vstack([pos1, pos2])
     
-    return particles
+    colors1 = np.ones((len(pos1), 4), dtype=np.float32)
+    colors1[:, 0] = 0.3   # cyan-ish
+    colors1[:, 1] = 1.0
+    colors1[:, 2] = 1.0
+    colors1[:, 3] = 0.8
 
-# Add three galaxies
-print("Creating galaxies...")
+    colors2 = np.ones((len(pos2), 4), dtype=np.float32)
+    colors2[:, 0] = 1.0   # magenta-ish
+    colors2[:, 1] = 0.3
+    colors2[:, 2] = 1.0
+    colors2[:, 3] = 0.8
 
-# Galaxy 1: Left side, moving right - 3-arm spiral
-galaxy1 = create_mini_galaxy(
-    center=np.array([-80, 0, 0]), 
-    velocity=np.array([8, 0, 0]), 
-    num_particles=140,
-    arms=3
-)
+    colors = np.vstack([colors1, colors2])
+    return positions, colors
 
-# Galaxy 2: Right side, moving left - 5-arm spiral
-galaxy2 = create_mini_galaxy(
-    center=np.array([80, 0, 0]), 
-    velocity=np.array([-11, 0, 0]), 
-    num_particles=140,
-    arms=5
-)
+positions, colors = get_positions_colors(gal1, gal2)
+sizes = np.ones(len(positions)) * 3
 
-# Galaxy 3: Top side, moving down - 4-arm spiral
-galaxy3 = create_mini_galaxy(
-    center=np.array([0, 80, 0]), 
-    velocity=np.array([0, -11, 0]), 
-    num_particles=120,
-    arms=4
-)
+# ----------------------------
+# VisPy setup
+# ----------------------------
+canvas = scene.SceneCanvas(keys='interactive', size=(1200, 900), show=True)
+view = canvas.central_widget.add_view()
+view.camera = scene.cameras.TurntableCamera(up='+z', fov=45, distance=150)
 
-# Merge all particles
-engine.particles = galaxy1 + galaxy2 + galaxy3
-engine.num_particles = len(engine.particles)
+scatter = scene.visuals.Markers()
+scatter.set_data(positions, face_color=colors, size=sizes, edge_color=None)
+view.add(scatter)
 
-print(f"Total particles: {engine.num_particles}")
+frame_count = 0
 
-# Adjust engine parameters for multi-galaxy simulation
-engine.G = 1.0  # Maintain reasonable gravity
-engine.central_mass = 500.0  # Moderate central mass
-engine.use_sph = True  # Enable SPH fluid effects!
-
-# Plot setup
-fig, ax = plt.subplots(figsize=(10, 10))
-scat = ax.scatter([], [], s=0.8, c='white', alpha=0.7)
-ax.set_facecolor('black')
-ax.set_xlim(-150, 150)
-ax.set_ylim(-150, 150)
-ax.set_aspect('equal')
-ax.set_title('Multi-Galaxy Collision Simulation')
-
+# ----------------------------
 # Update function
-def update(frame):
-    engine.update(dt=0.05)  # Use same time step as original
-    
-    if frame % 100 == 0:  # Print status every 100 frames
-        print(f"Frame {frame} - SPH enabled: {engine.use_sph}")
-    
-    positions = engine.get_positions()
-    scat.set_offsets(positions[:, :2])
-    
-    # Update title to show frame number
-    ax.set_title(f'Multi-Galaxy Collision (SPH Enabled) - Frame {frame}')
-    
-    return scat,
+# ----------------------------
+def update(ev):
+    global frame_count, scatter
 
-# Start animation
-ani = FuncAnimation(fig, update, frames=2000, interval=50, blit=True)
+    frame_count += 1
 
-plt.tight_layout()
-plt.show()
+    t0 = time.time()
+    # Update both galaxies
+    for _ in range(3):
+        gal1.update(dt=0.0033)
+        gal2.update(dt=0.0033)
+    t1 = time.time()
 
-# Optional: Save animation
-# ani.save('galaxy_collision.gif', writer='pillow', fps=25)
+    positions, colors = get_positions_colors(gal1, gal2)
+    scatter.set_data(positions, face_color=colors, size=sizes, edge_color=None)
+    t2 = time.time()
+
+    total_time = (t2 - t0) * 1000
+    fps = 1000.0 / total_time if total_time > 0 else 0
+    #print(f"[DEBUG] Frame {frame_count}: Total={total_time:.2f} ms ({fps:.1f} FPS)")
+
+timer = app.Timer(interval=1/60.0, connect=update, start=True)
+app.run()
