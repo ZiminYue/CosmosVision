@@ -66,6 +66,54 @@ It should be animated, but everything's frozen in this version.
 - Test output-13: ![Description](TestOutput/0824-02.gif)
 
 ### August 24
-1. Updated `vispy_demo.py` with loading time detecting code, found that the lagging was caused by SPH module.
+Updated `vispy_demo.py` with loading time detecting code, found that the lagging was caused by SPH module.
 - Debug info: ![Description](Debugs/0825-SPHLagging.png)
 
+### August 25
+1. ❕ Major update: Switch the simulation to GPU using CuPy, updating `core.py` and `vispy_demo.py`
+   
+   (1) Update core dependencies:
+   
+   ```
+   conda install numpy=1.25 scipy=1.11
+   ```
+   
+   (2) Install GPU support:
+   
+   ```
+   conda install -c conda-forge cupy=13.6 cudatoolkit=11.8
+   ```
+   
+   (3) Modify current code
+   
+   - Added GPU flags and buffers (in `core.py`):
+   ```
+   self.use_gpu = False
+   self.gpu_n2_limit = 3000
+   self._gpu_ready = False
+   self._d_pos, self._d_vel, self._d_mass = None, None, None
+   ```
+   
+   - Implemented `_gpu_build_from_particles()` to upload particle data to GPU, and `_gpu_push_to_particles()` to fetch results back to CPU for rendering.
+   - 
+   (4) GPU N² update
+
+   - `_update_gpu_n2(self, dt)` computes pairwise gravity on GPU with central mass, damping, and velocity/boundary constraints.
+
+   - Particle positions/velocities are updated in float32 for memory efficiency.
+     
+   - Update in main `update()`
+     ```
+     if self.use_gpu and (N <= self.gpu_n2_limit):
+          self._update_gpu_n2(dt)
+      else:
+          self._update_cpu(dt)
+      ```
+   (5) Demo update
+   
+   - Added `galaxy.use_gpu = True` and `galaxy.use_sph = True`
+     
+-  Test output-14 (The animation is very smooth now!): ![Description](TestOutput/0825.gif)
+
+2. Created another version of `test_multiple_galaxies.py` to see the effects (I've also tried to let two galaxies from in different planes collide, but after the hit, particles went strange ways)
+-  Test output-15 (The animation is very smooth now!): ![Description](TestOutput/0825-02.gif)
