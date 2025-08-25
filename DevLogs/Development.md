@@ -69,3 +69,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 - Replaced the Matplotlib-based rendering with VisPy under LLMs' assistance, allowing the render of a large number of particles much more smoothly. 
 - Edited the code for a long time, finally get the galaxy animated again (with lagging).
 - Highlighted potentially useful parameters for later development
+
+### August 25
+- MAJOR UPDATE: Switched the system to GPU using CuPy, the animation can run smoothly with all existing modules and more particles now!
