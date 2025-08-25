@@ -72,6 +72,8 @@ Updated `vispy_demo.py` with loading time detecting code, found that the lagging
 ### August 25
 1. ❕ Major update: Switch the simulation to GPU using CuPy, updating `core.py` and `vispy_demo.py`
    
+   Steps Taken:
+   
    (1) Update core dependencies:
    
    ```
