@@ -72,3 +72,8 @@
 ### August 18
 
 - Read some UAL MSc Written Thesis Examples and refined my methodology section
+
+### August 26
+
+- Structured the final thesis
+- Refined the research focus and methodology sections
