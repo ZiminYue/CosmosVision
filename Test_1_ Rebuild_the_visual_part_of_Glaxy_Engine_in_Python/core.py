@@ -106,7 +106,7 @@ class GalaxyEngine:
         
 
         # === New: GPU switch & cache ===
-        self.use_gpu = False                 # Can be switched externally
+        self.use_gpu = True                # Can be switched externally
         self.gpu_n2_limit = 3000            # N² GPU safety limit
         self._gpu_ready = False
         self._d_pos = None                  # (N,3) float32
