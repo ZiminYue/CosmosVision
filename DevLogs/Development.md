@@ -57,7 +57,7 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 - Tried to generate animated galaxies with existing code functions (see `tech work` branch).
 
 ### August 7
-- Succeeded in creating a spinning spiral galaxy, integrating code from https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/ (see `tech work` branch). Adjustment required, though.
+- Succeeded in creating a spinning spiral galaxy, integrating code from `https://towardsdatascience.com/create-3-d-galactic-art-with-matplotlib-a7534148a319/` (see `tech work` branch). Adjustment required, though.
 
 ### August 15
 - Adjusted code for generating spinning spiral galaxy, and tested the collision of multiple galaxies (Physical calculation effect is not obvious, and the animation is SLOW).
@@ -72,3 +72,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### August 25
 - MAJOR UPDATE: Switched the system to GPU using CuPy, the animation can run smoothly with all existing modules and more particles now!
+
+### August 27
+- Created a file for producing background stars and integrated it with the main galaxy simulation, producing rather ideal effects in the visual output
