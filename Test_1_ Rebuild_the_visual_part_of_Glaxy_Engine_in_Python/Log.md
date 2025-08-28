@@ -49,10 +49,10 @@ But this version cannot generate animation correctly and ChatGPT failed to fix i
 ### August 23
 Made adjustment in `core.py` and created `vispy_demo.py`, replacing the Matplotlib-based rendering with VisPy (`pip install Vispy` needed). Added a cloud of particles in the center of the galaxy.
 
-Pros:
+Good news:
 Now it is possible to smoothly render 3D output with thousands of practicles.
 
-Cons:
+Bad news:
 It should be animated, but everything's frozen in this version.
 - Test output-11: ![Description](TestOutput/0823.gif)
 
@@ -119,3 +119,7 @@ Updated `vispy_demo.py` with loading time detecting code, found that the lagging
 
 2. Created another version of `test_multiple_galaxies.py` to see the effects (I've also tried to let two galaxies from in different planes collide, but after the hit, particles went strange ways)
 -  Test output-15 (The animation is very smooth now!): ![Description](TestOutput/0825-02.gif)
+
+### August 27
+Created `background.py` and `main.py`, and updated `core.py` to integrate the background stars with the galaxy simulation. Adjusted parameters to control star number, color, brightness, and motion speed. Now the visual output part can produce a rather ideal cosmic animated scene.
+-  Test output-16: ![Description](TestOutput/0827.gif)
