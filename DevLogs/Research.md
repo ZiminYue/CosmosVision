@@ -77,3 +77,7 @@
 
 - Structured the final thesis
 - Refined the research focus and methodology sections
+
+### August 27
+
+- Refined the introduction and abstract sections
