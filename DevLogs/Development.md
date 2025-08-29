@@ -75,3 +75,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### August 27
 - Created a file for producing background stars and integrated it with the main galaxy simulation, producing rather ideal effects in the visual output
+
+### August 29
+- Started designing the input -> output mapping system
