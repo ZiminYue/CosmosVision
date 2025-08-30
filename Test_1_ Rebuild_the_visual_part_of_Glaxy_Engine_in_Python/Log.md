@@ -123,3 +123,7 @@ Updated `vispy_demo.py` with loading time detecting code, found that the lagging
 ### August 27
 Created `background.py` and `main.py`, and updated `core.py` to integrate the background stars with the galaxy simulation. Adjusted parameters to control star number, color, brightness, and motion speed. Now the visual output part can produce a rather ideal cosmic animated scene.
 -  Test output-16: ![Description](TestOutput/0827.gif)
+
+### August 30
+Finished mappping design and created `motion_input.py` to test Mediapipe functions and adjust parameters
+-  Test input-01: ![Description](TestOutput/0830.gif)
