@@ -4,3 +4,5 @@ cupy==13.6
 cudatoolkit==11.8
 matplotlib==3.9.2
 vispy==0.15.2
+mediapipe
+opencv-python
