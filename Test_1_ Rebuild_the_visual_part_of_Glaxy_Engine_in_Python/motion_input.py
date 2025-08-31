@@ -15,7 +15,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1000)
 with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
     prev_time = time.time()
     prev_landmarks = None
-    motion_history = []
+    
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -37,7 +37,6 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             "galaxy_brightness": 0,
             "galaxy_color_temp": 0,
             "galaxy_count": 0,
-            "galaxy_stability": 0
         }
 
         # Debug info
@@ -48,6 +47,9 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             h, w, _ = image.shape
 
             # ---- 1. Moving speed -> Star speed ----
+            # Calculates movement by comparing 5 key body points between current and previous frame
+            # Detection points: NOSE (face center), LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_WRIST, RIGHT_WRIST
+            # Method: Calculate pixel displacement for each point, then average all movements
             if prev_landmarks is not None:
                 diffs = []
                 key_points = [
@@ -72,6 +74,10 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             prev_landmarks = [lm for lm in landmarks]
 
             # ---- 2. Range of motion -> Galaxy size ----
+            # Measures the bounding box of ALL 33 visible body landmarks detected by MediaPipe
+            # Detection criteria: Only uses landmarks with visibility > 0.5 (confident detections)
+            # Method: Find min/max X,Y coordinates of all valid points, calculate total span
+            # Landmarks include: face points (0-10), body joints (11-16), hands (17-22), legs (23-32)
             valid_landmarks = [(lm.x, lm.y) for lm in landmarks if lm.visibility > 0.5]
             debug_info["valid_landmark_count"] = len(valid_landmarks)
             
@@ -89,7 +95,10 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 galaxy_params["galaxy_size"] = min(total_motion_range / 1500.0, 1.0)
 
             # ---- 3. Size in camera -> Galaxy brightness ----
-            #  Head-shoulder distance
+            # Detection points: LEFT_SHOULDER (point 11) and RIGHT_SHOULDER (point 12)
+            # Method: Measures horizontal distance between shoulder joints in pixels
+            # Logic: Closer to camera = wider shoulder span = higher brightness value
+            # Formula: |left_shoulder.x - right_shoulder.x| * frame_width
             left_shoulder = landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value]
             right_shoulder = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
 
@@ -103,24 +112,25 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             galaxy_params["galaxy_brightness"] = min(shoulder_dist / 1000.0, 1.0)
 
             # ---- 4. Distance to center -> Galaxy color temperature ----
+            # Detection point: NOSE (point 0) - the most stable facial landmark
+            # Method: Calculate Euclidean distance from nose position to frame center (0.5, 0.5)
+            # Frame coordinates: (0,0) = top-left, (1,1) = bottom-right, (0.5,0.5) = center
+            # Logic: Center position = cool colors, edge positions = warm colors
             nose = landmarks[mp_pose.PoseLandmark.NOSE.value]
             dist_to_center = np.sqrt((nose.x-0.5)**2 + (nose.y-0.5)**2)
             galaxy_params["galaxy_color_temp"] = min(dist_to_center * 3, 1.0)
 
             # ---- 5. Hand distance -> Galaxy count ----
+            # Detection points: LEFT_WRIST (point 15) and RIGHT_WRIST (point 16)
+            # Method: Calculate Euclidean distance between both wrist positions
+            # Logic: Hands spread apart = more galaxies, hands together = fewer galaxies
+            # Formula: sqrt((x2-x1)² + (y2-y1)²) using normalized coordinates
             lh = landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value]
             rh = landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value]
             hand_dist = np.sqrt((lh.x-rh.x)**2 + (lh.y-rh.y)**2)
             galaxy_params["galaxy_count"] = min(hand_dist * 2, 1.0)
 
-            # ---- 6. Stability -> Galaxy stability ----
-            motion_history.append(galaxy_params["star_speed"])
-            if len(motion_history) > 15:
-                motion_history.pop(0)
-            
-            if len(motion_history) > 1:
-                stability_variance = np.var(motion_history)
-                galaxy_params["galaxy_stability"] = max(0, 1.0 - stability_variance * 100)
+        
 
             # Draw skeleton
             mp_drawing.draw_landmarks(image, results.pose_landmarks, mp_pose.POSE_CONNECTIONS)
@@ -132,7 +142,6 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             "galaxy_brightness": "Size in camera (Galaxy brightness)",
             "galaxy_color_temp": "Dist. to center (Color temp)",
             "galaxy_count": "Hand distance (Galaxy count)",
-            "galaxy_stability": "Stability (Galaxy stability)"
         }
 
         y0 = 30
