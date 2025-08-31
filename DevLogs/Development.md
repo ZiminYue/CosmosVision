@@ -78,3 +78,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### August 29
 - Started designing the input -> output mapping system
+
+### August 30
+- Finished the initial mapping system, started input test with MediaPipe
