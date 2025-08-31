@@ -129,5 +129,5 @@ Finished mapping design and created `motion_input.py` to test MediaPipe function
 -  Test input-01: ![Description](TestOutput/0830.gif)
 
 ### August 31
-Linked input and output with `main.py` and `motion_input.py`, deleted "stability" parameter for better effects.
+Connected input and output with `main.py` and `motion_input.py`, deleted "stability" parameter for better effects.
 -  Test input-02 & output-17: ![Description](TestOutput/0831.gif)
