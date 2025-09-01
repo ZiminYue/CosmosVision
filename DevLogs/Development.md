@@ -85,3 +85,7 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 ### August 31
 - Connected the input and the output
 - Adjusted the parameters for better effects
+
+### September 1
+- Created version for the collision of multiple galaxies
+- Asked two of my friends for testing and collected some feedback
