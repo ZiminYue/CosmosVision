@@ -131,3 +131,8 @@ Finished mapping design and created `motion_input.py` to test MediaPipe function
 ### August 31
 Connected input and output with `main.py` and `motion_input.py`, deleted "stability" parameter for better effects.
 -  Test input-02 & output-17: ![Description](TestOutput/0831.gif)
+
+### September 1
+1. Created `main_multiGalaxies.py` to see the visual effects produced by the collision of multiple galaxies.
+2. Asked two of my friends to test this version and collected some feedback
+-  Test input-03 & output-18: ![Description](TestOutput/0901.gif)
