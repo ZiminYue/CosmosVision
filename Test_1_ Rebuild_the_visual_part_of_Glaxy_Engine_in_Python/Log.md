@@ -136,3 +136,7 @@ Connected input and output with `main.py` and `motion_input.py`, deleted "stabil
 1. Created `main_multiGalaxies.py` to see the visual effects produced by the collision of multiple galaxies.
 2. Asked two of my friends to test this version and collected some feedback
 -  Test input-03 & output-18: ![Description](TestOutput/0901.gif)
+
+### September 2
+Created `main_multiGalaxies_camera.py`, adding auto-camera with multiple orbit patterns (and keeping manual control mode) for dynamic galaxy cinematography.
+-  Test output-19: ![Description](TestOutput/0902.gif)
