@@ -81,3 +81,8 @@
 ### August 27
 
 - Refined the introduction and abstract sections
+
+### September 6-7
+
+- Refined the methodology section
+
