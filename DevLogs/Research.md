@@ -86,3 +86,6 @@
 
 - Refined the methodology section
 
+### September 10
+
+- Refined the methodology section (with supervisor's advices)
