@@ -138,5 +138,9 @@ Connected input and output with `main.py` and `motion_input.py`, deleted "stabil
 -  Test input-03 & output-18: ![Description](TestOutput/0901.gif)
 
 ### September 2
-Created `main_multiGalaxies_camera.py`, adding auto-camera with multiple orbit patterns (and keeping manual control mode) for dynamic galaxy cinematography.
+Created `main_multiGalaxies_camera.py`, adding auto-camera (Update based on tester feedback) with multiple orbit patterns (and keeping manual control mode) for dynamic galaxy cinematography.
 -  Test output-19: ![Description](TestOutput/0902.gif)
+
+### September 18
+Updated `main_multiGalaxies_camera.py`, making the canvas window pop up as full screen and adding guiding text (Update based on tester feedback).
+-  Test output-20: ![Description](TestOutput/0918.gif)
