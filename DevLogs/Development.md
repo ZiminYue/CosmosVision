@@ -92,3 +92,7 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### September 2
 - Following one of the tester's suggestions, added auto-cameras for dynamic galaxy cinematography.
+
+### September 18
+- Following one of the tester's suggestions, added guiding text on the canvas screen.
+- Made the canvas window pop up as full screen for better UX
