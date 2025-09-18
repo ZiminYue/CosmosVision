@@ -5,6 +5,7 @@ import time
 import threading
 import random
 import math
+import itertools
 
 from vispy import app, scene
 from core import GalaxyEngine
@@ -542,11 +543,11 @@ def run_input():
 # =======================
 def run_output():
     # Background star range adjustment parameters
-    BACKGROUND_RANGE = 60  # Background star distribution range (larger = wider distribution, recommended range: 40-100)
-    BACKGROUND_STAR_COUNT = 3000  # Number of background stars
+    BACKGROUND_RANGE = 60
+    BACKGROUND_STAR_COUNT = 3000
     
     bg = BackgroundStars(n_stars=BACKGROUND_STAR_COUNT, bounds=BACKGROUND_RANGE, size=5, color=(1,1,1,0.6))
-    canvas = scene.SceneCanvas(keys='interactive', size=(1200, 900), show=True)
+    canvas = scene.SceneCanvas(keys='interactive', size=(1200, 900), fullscreen=True, show=True)
     view = canvas.central_widget.add_view()
     
     # Use TurntableCamera and create camera controller
@@ -583,94 +584,203 @@ def run_output():
             scatter_g = scene.visuals.Markers()
             view.add(scatter_g)
             galaxy_scatters.append(scatter_g)
+            
+        canvas.update()
 
     # Initialize galaxy visual object
     reset_galaxies()
 
+    # ===== WORKING TEXT SOLUTION =====
+    # Create a separate view for 2D overlay text
+    text_view = canvas.central_widget.add_view()
+    text_view.camera = scene.cameras.PanZoomCamera()
+    text_view.camera.interactive = False
+    text_view.camera.flip = (False, True, False)  # Flip Y to match screen coordinates
+    text_view.camera.set_range(x=(0, canvas.size[0]), y=(0, canvas.size[1]))
+    
+    # Messages for the main text
+    messages = [
+        "Move your body to see the stars react",
+        "Press R to reset the galaxy",
+        "Try waving both hands!"
+    ]
+    msg_cycle = itertools.cycle(messages)
+
+    # Create main instruction text
+    main_text = scene.visuals.Text(
+        text=next(msg_cycle),
+        pos=(canvas.size[0] // 2, 80),
+        color=(1, 1, 1, 1),
+        font_size=18,
+        anchor_x='center',
+        anchor_y='center',
+        parent=text_view.scene
+    )
+
+    # Create instruction texts at bottom
+    instruction_texts = [
+        "Camera: Press C to change orbit mode",
+        "Movement: SPACE to pause camera", 
+        "Reset: Press R to reset galaxies"
+    ]
+    
+    instruction_nodes = []
+    for i, instruction in enumerate(instruction_texts):
+        inst_text = scene.visuals.Text(
+            text=instruction,
+            pos=(20, canvas.size[1] - 100 + i * 25),
+            color=(0.8, 0.8, 1.0, 0.8),
+            font_size=12,
+            anchor_x='left',
+            anchor_y='center',
+            parent=text_view.scene
+        )
+        instruction_nodes.append(inst_text)
+
+    # Control variables for text animation
+    animation_state = "waiting"  # States: "waiting", "fade_in", "hold", "fade_out", "hidden"
+    fade_frames = 120        # frames fade in/out at 60fps
+    hold_frames = 30       # frames hold at full opacity
+    hidden_frames = 180     # frames hidden between messages
+    frame_counter = 0
+    current_message = next(msg_cycle)
+
     def update(ev):
+        nonlocal animation_state, frame_counter, current_message
+        
+        # Handle main text display and animation
         if not galaxy_params["input_started"]:
-            return
+            # Show different message when waiting for input
+            main_text.text = "Stand in front of the camera to begin..."
+            main_text.color = (1, 1, 0, 0.9)  # Bright yellow when waiting
+            animation_state = "waiting"
+            frame_counter = 0
+        else:
+            frame_counter += 1
+            
+            if animation_state == "waiting":
+                # Start the first message cycle
+                animation_state = "fade_in"
+                frame_counter = 0
+                current_message = next(msg_cycle)
+                main_text.text = current_message
+                
+            elif animation_state == "fade_in":
+                # Fade in over fade_frames
+                progress = frame_counter / fade_frames
+                alpha = min(1.0, progress)
+                main_text.color = (1, 1, 1, alpha)
+                
+                if frame_counter >= fade_frames:
+                    animation_state = "hold"
+                    frame_counter = 0
+                    
+            elif animation_state == "hold":
+                # Hold at full opacity
+                main_text.color = (1, 1, 1, 1.0)
+                
+                if frame_counter >= hold_frames:
+                    animation_state = "fade_out"
+                    frame_counter = 0
+                    
+            elif animation_state == "fade_out":
+                # Fade out over fade_frames
+                progress = frame_counter / fade_frames
+                alpha = max(0.0, 1.0 - progress)
+                main_text.color = (1, 1, 1, alpha)
+                
+                if frame_counter >= fade_frames:
+                    animation_state = "hidden"
+                    frame_counter = 0
+                    main_text.text = ""  # Clear text during hidden period
+                    
+            elif animation_state == "hidden":
+                # Stay hidden (no text)
+                main_text.color = (1, 1, 1, 0.0)
+                
+                if frame_counter >= hidden_frames:
+                    # Start next message cycle
+                    animation_state = "fade_in" 
+                    frame_counter = 0
+                    current_message = next(msg_cycle)
+                    main_text.text = current_message
             
         # Update camera trajectory (only if not in manual mode)
-        if not camera_controller.is_manual_mode():
-            camera_controller.update(1/60.0)  # Assume 60FPS
+        if galaxy_params["input_started"] and not camera_controller.is_manual_mode():
+            camera_controller.update(1/60.0)
             
         # Update multiple galaxy system
-        dt = galaxy_params["star_speed"] * 0.02 + 0.005
-        multi_galaxy.update(dt, galaxy_params)
-        
-        # Updated visuals for each galaxy
-        active_galaxies = multi_galaxy.get_active_galaxies()
-        
-        for i, (galaxy, scatter) in enumerate(zip(active_galaxies, galaxy_scatters[:len(active_galaxies)])):
-            if 'current_positions' not in galaxy:
-                continue
+        if galaxy_params["input_started"]:
+            dt = galaxy_params["star_speed"] * 0.02 + 0.005
+            multi_galaxy.update(dt, galaxy_params)
+            
+            # Updated visuals for each galaxy
+            active_galaxies = multi_galaxy.get_active_galaxies()
+            
+            for i, (galaxy, scatter) in enumerate(zip(active_galaxies, galaxy_scatters[:len(active_galaxies)])):
+                if 'current_positions' not in galaxy:
+                    continue
+                    
+                positions = galaxy['current_positions']
                 
-            positions = galaxy['current_positions']
+                # Calculate color - cool and warm based on color_temp parameter
+                color_temp = galaxy_params["galaxy_color_temp"]
+                brightness = galaxy_params["galaxy_brightness"]
+                
+                # Start with a base blue color
+                base_color = galaxy['base_color'].copy()
+                
+                # Apply warm and cool tones
+                if color_temp > 0.5:  # Warm
+                    warmth_factor = (color_temp - 0.5) * 2
+                    base_color[0] += warmth_factor * 0.4
+                    base_color[2] -= warmth_factor * 0.3
+                else:  # Cool
+                    coolness_factor = (0.5 - color_temp) * 2
+                    base_color[2] += coolness_factor * 0.3
+                    base_color[0] -= coolness_factor * 0.2
+                
+                base_color = [max(0.1, min(1.0, c)) for c in base_color]
+                base_color.append(0.3 + 0.7 * brightness)
+                
+                colors = np.tile(base_color, (len(positions), 1))
+                scatter.set_data(positions, face_color=colors, size=6, edge_color=None)
             
-            # Calculate color - cool and warm based on color_temp parameter
-            color_temp = galaxy_params["galaxy_color_temp"]
-            brightness = galaxy_params["galaxy_brightness"]
+            # Hide extra scatter objects
+            for j, scatter in enumerate(galaxy_scatters[len(active_galaxies):]):
+                scatter.set_data(np.array([[1000, 1000, 1000]]), face_color=(0,0,0,0), size=0)
             
-            # Start with a base blue color
-            base_color = galaxy['base_color'].copy()
+            # Update background stars
+            galaxy_centers = []
+            for galaxy in active_galaxies:
+                if 'center_pos' in galaxy:
+                    galaxy_centers.append({
+                        "pos": galaxy['center_pos'], 
+                        "mass": galaxy['mass'] * (1 + galaxy_params["galaxy_count"] * 2)
+                    })
             
-            # Apply warm and cool tones: color_temp larger = warm (reddish), smaller = cool (bluish)
-            if color_temp > 0.5:  # Warm
-                warmth_factor = (color_temp - 0.5) * 2  # 0 to 1
-                base_color[0] += warmth_factor * 0.4  # Add red
-                base_color[2] -= warmth_factor * 0.3  # Reduce blue
-            else:  # Cool
-                coolness_factor = (0.5 - color_temp) * 2  # 0 to 1
-                base_color[2] += coolness_factor * 0.3  # Add blue
-                base_color[0] -= coolness_factor * 0.2  # Reduce red
+            if galaxy_centers:
+                bg.refresh_canvas(scatter_bg, galaxies=galaxy_centers)
             
-            # Make sure the color is within the valid range
-            base_color = [max(0.1, min(1.0, c)) for c in base_color]
-            base_color.append(0.3 + 0.7 * brightness)  # alpha
-            
-            
-            # Set Color - All particles have the same color
-            colors = np.tile(base_color, (len(positions), 1))
-            
-            
-            scatter.set_data(positions, face_color=colors, size=6, edge_color=None)
+            bg_brightness = 0.07 + 0.9 * galaxy_params["galaxy_brightness"]
+            bg_colors = bg.colors.copy()
+            bg_colors[:, 3] = bg_colors[:, 3] * bg_brightness
+            scatter_bg.set_data(bg.positions, face_color=bg_colors, size=bg.sizes, edge_color=None)
 
-            
-        
-        # Hide extra scatter objects
-        for j, scatter in enumerate(galaxy_scatters[len(active_galaxies):]):
-            # Make sure hidden objects do not affect rendering
-            scatter.set_data(np.array([[1000, 1000, 1000]]), face_color=(0,0,0,0), size=0)
-        
-        # Update background stars - ensure background stars are displayed
-        galaxy_centers = []
-        for galaxy in active_galaxies:
-            if 'center_pos' in galaxy:
-                galaxy_centers.append({
-                    "pos": galaxy['center_pos'], 
-                    "mass": galaxy['mass'] * (1 + galaxy_params["galaxy_count"] * 2)
-                })
-        
-        # Refresh background stars
-        if galaxy_centers:
-            bg.refresh_canvas(scatter_bg, galaxies=galaxy_centers)
-        
-        # Apply background brightness
-        bg_brightness = 0.07 + 0.9 * galaxy_params["galaxy_brightness"]
-        bg_colors = bg.colors.copy()
-        bg_colors[:, 3] = bg_colors[:, 3] * bg_brightness
-        scatter_bg.set_data(bg.positions, face_color=bg_colors, size=bg.sizes, edge_color=None)
+        # Update instruction text based on current camera mode
+        if hasattr(camera_controller, 'current_pattern') and len(instruction_nodes) > 0:
+            instruction_nodes[0].text = f"Camera Mode: {camera_controller.current_pattern} (Press C)"
 
-    # Keyboard controls
+        canvas.update()
+
+    # Keyboard controls (same as before)
     def on_key_press(event):
         if event.text.lower() == 'r':
             reset_galaxies()
         elif event.text.lower() == 'c':
             camera_controller.next_pattern()
-            # Enable/disable camera interactivity based on mode
             view.camera.interactive = camera_controller.is_manual_mode()
-        elif event.text == ' ':  # Space key
+        elif event.text == ' ':
             camera_controller.toggle_pause()
         elif event.text.lower() == 'o':
             camera_params["auto_orbit"] = not camera_params["auto_orbit"]
@@ -689,6 +799,7 @@ def run_output():
             print(f"Base distance: {camera_params['base_distance']}")
 
     canvas.events.key_press.connect(on_key_press)
+    
     timer = app.Timer(interval=1/60.0, connect=update, start=True)
     app.run()
 
