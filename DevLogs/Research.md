@@ -89,3 +89,6 @@
 ### September 10
 
 - Refined the methodology section (with supervisor's advices)
+
+### September 18
+- Created Chinese version of the Participant Information and Consent form
