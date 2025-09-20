@@ -601,8 +601,12 @@ def run_output():
     # Messages for the main text
     messages = [
         "Move your body to see the stars react",
-        "Press R to reset the galaxy",
-        "Try waving both hands!"
+        "Try waving your hands",
+        "Try moving up and down",
+        "Try getting closer or farther away",
+        "Try moving faster or slower",
+        "Create your own piece of universe!"
+        
     ]
     msg_cycle = itertools.cycle(messages)
 
@@ -611,7 +615,7 @@ def run_output():
         text=next(msg_cycle),
         pos=(canvas.size[0] // 2, 80),
         color=(1, 1, 1, 1),
-        font_size=18,
+        font_size=15,
         anchor_x='center',
         anchor_y='center',
         parent=text_view.scene
@@ -619,9 +623,9 @@ def run_output():
 
     # Create instruction texts at bottom
     instruction_texts = [
-        "Camera: Press C to change orbit mode",
-        "Movement: SPACE to pause camera", 
-        "Reset: Press R to reset galaxies"
+        "Camera: Press [C] to switch camera orbit",
+        "Movement: Press [SPACE] to pause camera", 
+        "Reset: Press [R] to reset galaxies"
     ]
     
     instruction_nodes = []
@@ -630,7 +634,7 @@ def run_output():
             text=instruction,
             pos=(20, canvas.size[1] - 100 + i * 25),
             color=(0.8, 0.8, 1.0, 0.8),
-            font_size=12,
+            font_size=10,
             anchor_x='left',
             anchor_y='center',
             parent=text_view.scene
@@ -639,9 +643,9 @@ def run_output():
 
     # Control variables for text animation
     animation_state = "waiting"  # States: "waiting", "fade_in", "hold", "fade_out", "hidden"
-    fade_frames = 120        # frames fade in/out at 60fps
+    fade_frames = 60        # frames fade in/out at 60fps
     hold_frames = 30       # frames hold at full opacity
-    hidden_frames = 180     # frames hidden between messages
+    hidden_frames = 80     # frames hidden between messages
     frame_counter = 0
     current_message = next(msg_cycle)
 
