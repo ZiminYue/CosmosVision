@@ -144,3 +144,6 @@ Created `main_multiGalaxies_camera.py`, adding auto-camera (Update based on test
 ### September 18
 Updated `main_multiGalaxies_camera.py`, making the canvas window pop up as full screen and adding guiding text (Update based on tester feedback).
 -  Test output-20: ![Description](TestOutput/0918.gif)
+
+### September 19
+Edited the guiding text in `main_multiGalaxies_camera.py`.
