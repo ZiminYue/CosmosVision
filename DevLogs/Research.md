@@ -92,3 +92,8 @@
 
 ### September 18
 - Created Chinese version of the Participant Information and Consent form
+- Invited one tester to participate in the test and interviewed her for feedback
+
+### September 19
+- Transcribed the interview recording
+- Created the questionnaire based on the interview content and research questions
