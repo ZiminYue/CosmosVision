@@ -147,3 +147,8 @@ Updated `main_multiGalaxies_camera.py`, making the canvas window pop up as full 
 
 ### September 19
 Edited the guiding text in `main_multiGalaxies_camera.py`.
+
+### September 21
+1. Converted code that is not relevant to GUI in `light.cpp` into `lighting.py`.
+2. Edited `main_multiGalaxies_camera.py` to add accumulate lighting effect (adjustment required).
+-  Test output-21: ![Description](TestOutput/0921.gif)
