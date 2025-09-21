@@ -99,3 +99,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### September 19
 - Made some adjustments to the guiding text
+
+### September 21
+- Converted the new file from **Galaxy Engine**, adding extra lighting effect to the galaxies
