@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import cupy as cp
 import numpy as np
 import time
 import threading
@@ -10,6 +11,7 @@ import itertools
 from vispy import app, scene
 from core import GalaxyEngine
 from background import BackgroundStars
+from lighting import emission, accumulate_lighting_vectorized, generate_star_colors
 
 # =======================
 # Shared State (global dict for params)
@@ -146,7 +148,7 @@ class MultiGalaxySystem:
             
             # Update galaxies' interior particle system
             galaxy['engine'].update(dt=dt * (0.5 + collision_strength))
-            positions = galaxy['engine'].get_positions()
+            positions = galaxy['engine'].get_positions().copy()  # Make sure we get a copy
             
             # Apply the influence in scale
             scale_factor = galaxy['base_size'] * (0.7 + size_influence * 0.6)
@@ -542,6 +544,9 @@ def run_input():
 # Output Thread (Multi-Galaxy Vispy)
 # =======================
 def run_output():
+    # Initialize camera controller as global so input can reference it
+    global camera_controller
+    
     # Background star range adjustment parameters
     BACKGROUND_RANGE = 60
     BACKGROUND_STAR_COUNT = 3000
@@ -718,38 +723,46 @@ def run_output():
             dt = galaxy_params["star_speed"] * 0.02 + 0.005
             multi_galaxy.update(dt, galaxy_params)
             
+            # DEBUG: Print update info occasionally
+            if hasattr(update, 'debug_counter'):
+                update.debug_counter += 1
+            else:
+                update.debug_counter = 0
+            
+            if update.debug_counter % 60 == 0:  # Print every 60 frames (1 second)
+                print(f"Debug: dt={dt:.4f}, active_galaxies={len(multi_galaxy.get_active_galaxies())}")
+            
             # Updated visuals for each galaxy
             active_galaxies = multi_galaxy.get_active_galaxies()
             
             for i, (galaxy, scatter) in enumerate(zip(active_galaxies, galaxy_scatters[:len(active_galaxies)])):
                 if 'current_positions' not in galaxy:
                     continue
-                    
-                positions = galaxy['current_positions']
+
+                positions_np = galaxy['current_positions']  # NumPy array from GalaxyEngine
                 
-                # Calculate color - cool and warm based on color_temp parameter
-                color_temp = galaxy_params["galaxy_color_temp"]
-                brightness = galaxy_params["galaxy_brightness"]
+                # Step 1: create emitters (all on GPU) - FIXED VERSION
+                emitters = [emission(galaxy['center_pos'], intensity=galaxy['mass']*0.01)]
+                normal_gpu = cp.array([0,0,1], dtype=cp.float32)
+                positions_gpu = cp.array(galaxy['current_positions'], dtype=cp.float32)
+
+                # Step 2: generate colors using the lighting system - FIXED VERSION
+                colors = generate_star_colors(
+                    positions_gpu,
+                    normal_gpu,
+                    emitters,
+                    color_temp=galaxy_params["galaxy_color_temp"],
+                    brightness=galaxy_params["galaxy_brightness"],
+                    kd=0.7  # Diffuse coefficient
+                )
                 
-                # Start with a base blue color
-                base_color = galaxy['base_color'].copy()
-                
-                # Apply warm and cool tones
-                if color_temp > 0.5:  # Warm
-                    warmth_factor = (color_temp - 0.5) * 2
-                    base_color[0] += warmth_factor * 0.4
-                    base_color[2] -= warmth_factor * 0.3
-                else:  # Cool
-                    coolness_factor = (0.5 - color_temp) * 2
-                    base_color[2] += coolness_factor * 0.3
-                    base_color[0] -= coolness_factor * 0.2
-                
-                base_color = [max(0.1, min(1.0, c)) for c in base_color]
-                base_color.append(0.3 + 0.7 * brightness)
-                
-                colors = np.tile(base_color, (len(positions), 1))
-                scatter.set_data(positions, face_color=colors, size=6, edge_color=None)
-            
+                # Add alpha channel if not present
+                if colors.shape[1] == 3:
+                    alpha = np.ones((colors.shape[0], 1)) * 0.9
+                    colors = np.concatenate([colors, alpha], axis=1)
+
+                scatter.set_data(galaxy['current_positions'], face_color=colors, size=6, edge_color=None)
+
             # Hide extra scatter objects
             for j, scatter in enumerate(galaxy_scatters[len(active_galaxies):]):
                 scatter.set_data(np.array([[1000, 1000, 1000]]), face_color=(0,0,0,0), size=0)
@@ -777,7 +790,7 @@ def run_output():
 
         canvas.update()
 
-    # Keyboard controls (same as before)
+    # Keyboard controls
     def on_key_press(event):
         if event.text.lower() == 'r':
             reset_galaxies()
