@@ -97,3 +97,9 @@
 ### September 19
 - Transcribed the interview recording
 - Created the questionnaire based on the interview content and research questions
+
+### September 20
+- Invited one tester to participate in the test and interviewed her for feedback, and transcribed the recording.
+  
+### September 21
+- Posted participant recruitment information on the Post-Grad Collab & Connect Forum and Slack channels.
