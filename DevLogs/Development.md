@@ -102,3 +102,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### September 21
 - Converted the new file from **Galaxy Engine**, adding extra lighting effect to the galaxies
+
+### September 22
+- Attempted to package the project into an .exe file for portability, but after hours of trying PyInstaller and Nuitka, it still didn’t work.
