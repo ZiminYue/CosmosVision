@@ -112,3 +112,7 @@
 - Recorded some video clips and took some photos of the process
 - Collected feedback via questionnaire (according to their preference)
 - Arranged 2 more tests this week with the help received from the participants today!
+
+### October 7
+- Carried out a user test with 1 participant in UAL Dark Lab, recorded video clip and collected feedback via questionnaire
+
