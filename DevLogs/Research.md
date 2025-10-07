@@ -103,3 +103,12 @@
   
 ### September 21
 - Posted participant recruitment information on the Post-Grad Collab & Connect Forum and Slack channels.
+
+### September 28
+- Invited one tester to participate in the test and recorded some video clips of the process
+
+### October 6
+- Carried out a user test with 4 participants in UAL Dark Lab
+- Recorded some video clips and took some photos of the process
+- Collected feedback via questionnaire (according to their preference)
+- Arranged 2 more tests this week with the help received from the participants today!
