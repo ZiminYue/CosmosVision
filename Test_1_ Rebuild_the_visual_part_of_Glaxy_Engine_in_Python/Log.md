@@ -154,5 +154,5 @@ Edited the guiding text in `main_multiGalaxies_camera.py`.
 -  Test output-21: ![Description](TestOutput/0921.gif)
   
 ### October 7
-1. Edited `main_multiGalaxies_camera.py`, fixing the bug that caused the scene not to interact with the mouse in "manual camera mode".
+1. Edited `main_multiGalaxies_camera.py`, fixing the bug preventing mouse interaction with the scene in "manual camera mode".
 2. Edited the guiding message text for clearer instructions.
