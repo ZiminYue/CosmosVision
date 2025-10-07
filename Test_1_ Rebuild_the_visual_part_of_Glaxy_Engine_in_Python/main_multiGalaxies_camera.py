@@ -148,7 +148,7 @@ class MultiGalaxySystem:
             
             # Update galaxies' interior particle system
             galaxy['engine'].update(dt=dt * (0.5 + collision_strength))
-            positions = galaxy['engine'].get_positions().copy()  # Make sure we get a copy
+            positions = galaxy['engine'].get_positions()
             
             # Apply the influence in scale
             scale_factor = galaxy['base_size'] * (0.7 + size_influence * 0.6)
@@ -457,7 +457,7 @@ def run_input():
                         debug_info["shoulder_dist"] = shoulder_dist
                         
                         # Use reference code threshold of 1000
-                        galaxy_params["galaxy_brightness"] = min(shoulder_dist / 750.0, 1.0)
+                        galaxy_params["galaxy_brightness"] = min(shoulder_dist / 800.0, 1.0)
                         
                     except Exception as e:
                         debug_info["brightness_error"] = str(e)
@@ -469,7 +469,7 @@ def run_input():
                     nose = landmarks[mp_pose.PoseLandmark.NOSE.value]  # Point 0: Nose tip
                     dist_to_center = np.sqrt((nose.x-0.5)**2 + (nose.y-0.5)**2)
                     debug_info["dist_to_center"] = dist_to_center
-                    adjusted_distance = max(0, dist_to_center - 0.2)
+                    adjusted_distance = max(0, dist_to_center - 0.22)
                     galaxy_params["galaxy_color_temp"] = min(adjusted_distance * 3, 1.0)
 
                     # ---- 5. Hand distance -> Galaxy count ----
@@ -602,11 +602,12 @@ def run_output():
     text_view.camera.interactive = False
     text_view.camera.flip = (False, True, False)  # Flip Y to match screen coordinates
     text_view.camera.set_range(x=(0, canvas.size[0]), y=(0, canvas.size[1]))
+    text_view.interactive = False # Don't let the text capture any interactions
     
     # Messages for the main text
     messages = [
         "Move your body to see the stars react",
-        "Try waving your hands",
+        "Try waving both of your hands",
         "Try moving up and down",
         "Try getting closer or farther away",
         "Try moving faster or slower",
@@ -723,14 +724,14 @@ def run_output():
             dt = galaxy_params["star_speed"] * 0.02 + 0.005
             multi_galaxy.update(dt, galaxy_params)
             
-            # DEBUG: Print update info occasionally
-            if hasattr(update, 'debug_counter'):
-                update.debug_counter += 1
-            else:
-                update.debug_counter = 0
+            # # DEBUG: Print update info occasionally
+            # if hasattr(update, 'debug_counter'):
+            #     update.debug_counter += 1
+            # else:
+            #     update.debug_counter = 0
             
-            if update.debug_counter % 60 == 0:  # Print every 60 frames (1 second)
-                print(f"Debug: dt={dt:.4f}, active_galaxies={len(multi_galaxy.get_active_galaxies())}")
+            # if update.debug_counter % 60 == 0:  # Print every 60 frames (1 second)
+            #     print(f"Debug: dt={dt:.4f}, active_galaxies={len(multi_galaxy.get_active_galaxies())}")
             
             # Updated visuals for each galaxy
             active_galaxies = multi_galaxy.get_active_galaxies()
@@ -741,12 +742,12 @@ def run_output():
 
                 positions_np = galaxy['current_positions']  # NumPy array from GalaxyEngine
                 
-                # Step 1: create emitters (all on GPU) - FIXED VERSION
+                # Step 1: create emitters (all on GPU)
                 emitters = [emission(galaxy['center_pos'], intensity=galaxy['mass']*0.01)]
                 normal_gpu = cp.array([0,0,1], dtype=cp.float32)
                 positions_gpu = cp.array(galaxy['current_positions'], dtype=cp.float32)
 
-                # Step 2: generate colors using the lighting system - FIXED VERSION
+                # Step 2: generate colors using the lighting system
                 colors = generate_star_colors(
                     positions_gpu,
                     normal_gpu,
