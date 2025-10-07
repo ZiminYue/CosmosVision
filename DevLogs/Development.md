@@ -88,7 +88,7 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### September 1
 - Created version for the collision of multiple galaxies
-- Asked two of my friends for testing and collected some feedback
+- Invited two of my roommates (both are UAL students) for testing and collected some feedback
 
 ### September 2
 - Following one of the tester's suggestions, added auto-cameras for dynamic galaxy cinematography.
