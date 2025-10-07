@@ -108,3 +108,7 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 
 ### October 6
 - Found that adding some music could improve immersion during testing, downloaded a royalty-free "cosmos" music from Pixabay (https://pixabay.com/music/ambient-floating-in-space-full-soundtrack-272331/) and planned to make it play with the code (not via other player software)
+  
+### October 7
+- Fixed the bug preventing mouse interaction with the scene in "manual camera mode"
+- Improved the guiding messages
