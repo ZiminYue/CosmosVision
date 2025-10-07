@@ -20,7 +20,6 @@
 - Started considering how may I combine it with Python code
 
 
-
 ### June 27
 
 - Discussed with LLMs about possible development directions:
@@ -106,3 +105,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 ### September 22
 - Attempted to package the project into an .exe file for portability, but after hours of trying PyInstaller and Nuitka, it still didn’t work.
 - But verified the feasibility of remote testing via a video call.
+
+### October 6
+- Found that adding some music could improve immersion during testing, downloaded a royalty-free "cosmos music" from Pixabay (https://pixabay.com/music/ambient-floating-in-space-full-soundtrack-272331/) and planned to make it play with the code (not via other player software)
