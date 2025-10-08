@@ -116,3 +116,6 @@
 ### October 7
 - Carried out a user test with 1 participant in UAL Dark Lab, recorded video clip and collected feedback via questionnaire
 
+### October 8
+- Organized the user testing files
+- Refined the methodology section
