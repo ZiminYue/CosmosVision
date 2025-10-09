@@ -629,9 +629,9 @@ def run_output():
 
     # Create instruction texts at bottom
     instruction_texts = [
-        "Camera: Press [C] to switch camera orbit",
-        "Movement: Press [SPACE] to pause camera", 
-        "Reset: Press [R] to reset galaxies"
+        "Camera Mode: [C] to switch orbit",
+        "Pause View: [SPACE] to pause camera", 
+        "Renew the Cosmos: [R] freeze and recreate new galaxies"
     ]
     
     instruction_nodes = []
