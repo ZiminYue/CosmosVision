@@ -114,8 +114,11 @@
 - Arranged 2 more tests this week with the help received from the participants today!
 
 ### October 7
-- Carried out a user test with 1 participant in UAL Dark Lab, recorded video clip and collected feedback via questionnaire
+- Carried out a user test with 1 participant in UAL Dark Lab, recorded a video clip and collected feedback via questionnaire
 
-### October 8
+### October 8-9
 - Organized the user testing files
 - Refined the methodology section
+
+### October 10
+- Carried out a user test with 2 participants in UAL Dark Lab, recorded a video clip and took photos. Feedback will be taken with the questionnaire since they have a later arrangement that requires them to leave early
