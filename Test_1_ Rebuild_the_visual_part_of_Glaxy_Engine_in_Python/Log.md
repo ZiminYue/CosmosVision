@@ -160,3 +160,6 @@ Edited the guiding text in `main_multiGalaxies_camera.py`.
 ### October 9
 1. Edited `main_multiGalaxies_camera.py`, updating guiding messages.
 2. Created `main_addAudio.py` for adding music.
+
+### October 10
+Edited `main_addAudio.py`, updating music player system.
