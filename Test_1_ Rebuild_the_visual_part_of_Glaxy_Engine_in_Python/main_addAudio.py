@@ -27,7 +27,13 @@ class MusicPlayer:
         self.is_playing = False
         
         # Initialize pygame mixer (without initializing video system)
-        pygame.mixer.init()
+        try:
+            pygame.mixer.init()
+        except pygame.error as e:
+            print(f"Warning: Could not initialize audio system: {e}")
+            print("Music playback will be disabled.")
+            self.audio_disabled = True
+            return
         
         # Load music file list
         self.load_playlist()
@@ -989,4 +995,3 @@ if __name__ == "__main__":
     if music_player:
         music_player.stop()
     pygame.quit()
-
