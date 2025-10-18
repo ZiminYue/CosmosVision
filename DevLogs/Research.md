@@ -129,4 +129,7 @@
 
 ### October 12
 - Conducted an in-person user test with 2 participants
-- Transcribed tha testers' interview
+- Transcribed tha testers' interviews
+
+### October 13-18
+- Organized the user testing files and interview transcriptions
