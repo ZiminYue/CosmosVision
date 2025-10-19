@@ -133,3 +133,6 @@
 
 ### October 13-18
 - Organized the user testing files and interview transcriptions
+
+### October 19
+- Refined the methodology section (the User Studies part)
