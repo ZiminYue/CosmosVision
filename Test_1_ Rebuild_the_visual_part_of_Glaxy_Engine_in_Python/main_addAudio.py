@@ -17,6 +17,106 @@ from background import BackgroundStars
 from lighting import emission, accumulate_lighting_vectorized, generate_star_colors
 
 # =======================
+# Language Settings
+# =======================
+# Note: The current font system in VisPy does not support rendering non-Latin characters (e.g., Chinese, Japanese, Korean),
+# so only three Latin-based languages (English, Spanish, and French) are included here as examples for language switching.
+# Non-English messages may contain inaccuracies (Sorry).
+
+# Available languages list (add more languages here)
+AVAILABLE_LANGUAGES = ["en", "es", "fr"]
+CURRENT_LANGUAGE_INDEX = 0  # Default to first language (English)
+
+def get_current_language():
+    """Get current language code"""
+    return AVAILABLE_LANGUAGES[CURRENT_LANGUAGE_INDEX]
+
+SCREEN_TEXTS = {
+    "en": {
+        # Main messages (top center)
+        "language_name": "English",
+        "stand_begin": "Stand in front of the camera to begin...",
+        "messages": [
+            "Move your body to see the stars react",
+            "Try waving both of your hands",
+            "Try moving up and down",
+            "Try getting closer or farther away",
+            "Try moving faster or slower",
+            "Create your own piece of universe!"
+        ],
+        
+        # Bottom instructions
+        "instructions": [
+            "Camera Mode: [C] to switch orbit",
+            "Pause View: [SPACE] to pause camera",
+            "Zoom In/Out: [Z] & [X]",
+            "Language: [L] to change language",
+            "Renew the Cosmos: [R] freeze and recreate new galaxies"
+        ],
+
+        # Bottom privacy note
+        "privacy_notice": "< This system does not record or store any video data without user consent >",
+        
+        # Dynamic text
+        "camera_mode_prefix": "Camera Mode: ",
+        "switch_with_c": " (Switch with [C])"
+    },
+    "es": {  # Spanish
+        "language_name": "Español",
+        "stand_begin": "Ponte frente a la cámara para comenzar...",
+        "messages": [
+            "Mueve tu cuerpo para ver las estrellas reaccionar",
+            "Intenta agitar ambas manos",
+            "Intenta moverte hacia arriba y abajo",
+            "Intenta acercarte o alejarte",
+            "Intenta moverte más rápido o más lento",
+            "¡Crea tu propia pieza de universo!"
+        ],
+        "instructions": [
+            "Modo de Cámara: [C] cambiar órbita",
+            "Pausar Vista: [SPACE] pausar cámara",
+            "Acercar/Alejar: [Z] y [X]",
+            "Idioma: [L] para cambiar el idioma",
+            "Renovar el Cosmos: [R] congelar y recrear nuevas galaxias"
+        ],
+        
+        "privacy_notice": "< Este sistema no graba ni almacena ningún dato de video sin el consentimiento del usuario >",
+
+        "camera_mode_prefix": "Modo de Cámara: ",
+        "switch_with_c": " (Cambiar con [C])"
+    },
+    "fr": {  # French
+        "language_name": "Français",
+        "stand_begin": "Placez-vous devant la caméra pour commencer...",
+        "messages": [
+            "Bougez votre corps pour voir les étoiles réagir",
+            "Essayez d'agiter vos deux mains",
+            "Essayez de bouger de haut en bas",
+            "Essayez de vous rapprocher ou de vous éloigner",
+            "Essayez de bouger plus vite ou plus lentement",
+            "Créez votre propre morceau d'univers!"
+        ],
+        "instructions": [
+            "Mode Caméra: [C] changer d'orbite",
+            "Pause Vue: [SPACE] mettre en pause",
+            "Zoom Avant/Arrière: [Z] et [X]",
+            "Langue: [L] pour changer de langue",
+            "Renouveler le Cosmos: [R] figer et recréer de nouvelles galaxies"
+        ],
+
+        "privacy_notice": "< Ce système n'enregistre ni ne stocke aucune donnée vidéo sans le consentement de l'utilisateur >",
+
+        "camera_mode_prefix": "Mode Caméra: ",
+        "switch_with_c": " (Changer avec [C])"
+    }
+}
+
+def get_text(key):
+    """Get text in current language"""
+    return SCREEN_TEXTS[get_current_language()][key]
+
+
+# =======================
 # Music Player
 # =======================
 class MusicPlayer:
@@ -654,19 +754,7 @@ def run_input():
             key = cv2.waitKey(5) & 0xFF
             if key == 27:  # ESC
                 break
-            # Music control
-            elif key == ord('n') and music_player:  # N: Next
-                music_player.next_song()
-            elif key == ord('p') and music_player:  # P: Pause/Continue
-                music_player.pause()
-            elif key == ord('v') and music_player:  # V: Volume up
-                current_vol = pygame.mixer.music.get_volume()
-                music_player.set_volume(current_vol + 0.1)
-                print(f"Volume: {pygame.mixer.music.get_volume():.1f}")
-            elif key == ord('b') and music_player:  # B: Volume down
-                current_vol = pygame.mixer.music.get_volume()
-                music_player.set_volume(current_vol - 0.1)
-                print(f"Volume: {pygame.mixer.music.get_volume():.1f}")
+            
 
     cap.release()
     cv2.destroyAllWindows()
@@ -683,7 +771,10 @@ def run_output():
     BACKGROUND_STAR_COUNT = 3000
     
     bg = BackgroundStars(n_stars=BACKGROUND_STAR_COUNT, bounds=BACKGROUND_RANGE, size=5, color=(1,1,1,0.6))
+    
+    # Let "fullscreen" be False if you want to check the camera feed window easier
     canvas = scene.SceneCanvas(keys='interactive', size=(1200, 900), fullscreen=True, show=True)
+
     view = canvas.central_widget.add_view()
     
     # Use TurntableCamera and create camera controller
@@ -735,22 +826,15 @@ def run_output():
     text_view.camera.set_range(x=(0, canvas.size[0]), y=(0, canvas.size[1]))
     text_view.interactive = False # Don't let the text capture any interactions
     
+    
     # Messages for the main text
-    messages = [
-        "Move your body to see the stars react",
-        "Try waving both of your hands",
-        "Try moving up and down",
-        "Try getting closer or farther away",
-        "Try moving faster or slower",
-        "Create your own piece of universe!"
-        
-    ]
+    messages = get_text("messages")
     msg_cycle = itertools.cycle(messages)
 
     # Create main instruction text
     main_text = scene.visuals.Text(
         text=next(msg_cycle),
-        pos=(canvas.size[0] // 2, 80),
+        pos=(canvas.size[0] // 2, 40),
         color=(1, 1, 1, 1),
         font_size=15,
         anchor_x='center',
@@ -759,24 +843,31 @@ def run_output():
     )
 
     # Create instruction texts at bottom
-    instruction_texts = [
-        "Camera Mode: [C] to switch orbit",
-        "Pause View: [SPACE] to pause camera", 
-        "Renew the Cosmos: [R] freeze and recreate new galaxies"
-    ]
+    instruction_texts = get_text("instructions")
     
     instruction_nodes = []
     for i, instruction in enumerate(instruction_texts):
         inst_text = scene.visuals.Text(
             text=instruction,
-            pos=(20, canvas.size[1] - 100 + i * 25),
-            color=(0.8, 0.8, 1.0, 0.8),
+            pos=(-15, canvas.size[1] - 130 + i * 30),  
+            color=(0.8, 0.8, 1.0, 0.6),
             font_size=10,
             anchor_x='left',
             anchor_y='center',
             parent=text_view.scene
         )
         instruction_nodes.append(inst_text)
+
+    # Privacy disclaimer text (centered at the bottom)
+    privacy_text = scene.visuals.Text(
+         text=get_text("privacy_notice"),
+         pos=(canvas.size[0] // 2, canvas.size[1] + 28),  
+         color=(0.9, 0.6, 0.6, 0.4),   
+         font_size=10,
+         anchor_x='center',
+         anchor_y='center',
+         parent=text_view.scene
+        )
 
     # Control variables for text animation
     animation_state = "waiting"  # States: "waiting", "fade_in", "hold", "fade_out", "hidden"
@@ -792,7 +883,7 @@ def run_output():
         # Handle main text display and animation
         if not galaxy_params["input_started"]:
             # Show different message when waiting for input
-            main_text.text = "Stand in front of the camera to begin..."
+            main_text.text = get_text("stand_begin")
             main_text.color = (1, 1, 0, 0.9)  # Bright yellow when waiting
             animation_state = "waiting"
             frame_counter = 0
@@ -918,30 +1009,57 @@ def run_output():
 
         # Update instruction text based on current camera mode
         if hasattr(camera_controller, 'current_pattern') and len(instruction_nodes) > 0:
-            instruction_nodes[0].text = f"Camera Mode: {camera_controller.current_pattern} (Switch with [C])"
+            instruction_nodes[0].text = (
+                get_text("camera_mode_prefix") + 
+                camera_controller.current_pattern + 
+                get_text("switch_with_c")
+            )
 
         canvas.update()
 
     # Keyboard controls
     def on_key_press(event):
-        global music_player
+        global music_player, CURRENT_LANGUAGE_INDEX
 
-        if event.text.lower() == 'r':
+        if event.text.lower() == 'l':  # L for switching language
+            # Cycle to next language
+            CURRENT_LANGUAGE_INDEX = (CURRENT_LANGUAGE_INDEX + 1) % len(AVAILABLE_LANGUAGES)
+            current_lang = get_current_language()
+            lang_name = SCREEN_TEXTS[current_lang]["language_name"]
+            
+            # Update all text immediately
+            # 1. Update bottom instructions
+            instruction_texts = get_text("instructions")
+            for i, node in enumerate(instruction_nodes):
+                if i < len(instruction_texts):
+                    node.text = instruction_texts[i]
+            
+            # 2. Update main message if waiting
+            if not galaxy_params["input_started"]:
+                main_text.text = get_text("stand_begin")
+            else:
+                # Update cycling messages
+                nonlocal msg_cycle
+                msg_cycle = itertools.cycle(get_text("messages"))
+            
+            # 3. Update camera mode text
+            if len(instruction_nodes) > 0:
+                instruction_nodes[0].text = (
+                    get_text("camera_mode_prefix") + 
+                    camera_controller.current_pattern + 
+                    get_text("switch_with_c")
+                )
+            # 4. Update privacy disclaimer
+            privacy_text.text = get_text("privacy_notice")
+            
+            print(f"Language switched to: {lang_name} ({current_lang})")
+        elif event.text.lower() == 'r':
             reset_galaxies()
         elif event.text.lower() == 'c':
             camera_controller.next_pattern()
             view.camera.interactive = camera_controller.is_manual_mode()
         elif event.text == ' ':
             camera_controller.toggle_pause()
-        elif event.text.lower() == 'o':
-            camera_params["auto_orbit"] = not camera_params["auto_orbit"]
-            print(f"Auto orbit: {'enabled' if camera_params['auto_orbit'] else 'disabled'}")
-        elif event.text == '+' or event.text == '=':
-            camera_params["orbit_speed"] = min(camera_params["orbit_speed"] * 1.2, 2.0)
-            print(f"Orbit speed: {camera_params['orbit_speed']:.2f}")
-        elif event.text == '-':
-            camera_params["orbit_speed"] = max(camera_params["orbit_speed"] * 0.8, 0.05)
-            print(f"Orbit speed: {camera_params['orbit_speed']:.2f}")
         elif event.text.lower() == 'z':
             camera_params["base_distance"] = max(camera_params["base_distance"] - 5, 20)
             print(f"Base distance: {camera_params['base_distance']}")
@@ -958,21 +1076,15 @@ def run_output():
 # Main
 # =======================
 if __name__ == "__main__":
-    print("=== Multi-Galaxy System with Music Player ===")
-    print("")
-    print("Music Controls:")
-    print("  N - Next song")
-    print("  P - Pause/Resume music")
-    print("  V - Increase volume")
-    print("  B - Decrease volume")
-    print("")
+    print("=== Cosmos Vision ===")
+    print(f"Supported languages: {', '.join([SCREEN_TEXTS[lang]['language_name'] for lang in AVAILABLE_LANGUAGES])}")
+    print(f"Current language: {SCREEN_TEXTS[get_current_language()]['language_name']}")
     print("Keyboard Controls:")
-    print("  R - Reset galaxies")
     print("  C - Switch camera orbit pattern")
     print("  SPACE - Pause/Resume camera movement")
-    print("  O - Enable/Disable auto orbit")
-    print("  +/- - Increase/Decrease orbit speed")
     print("  Z/X - Zoom in/out")
+    print("  L - Change language")
+    print("  R - Reset galaxies")
     print("")
     
     # Initialize music player
