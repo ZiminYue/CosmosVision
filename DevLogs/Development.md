@@ -121,4 +121,6 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 - Cleaned the code, removed invalid key controls.
 - Improved guiding messages.
 - Added multilingual options.
+- Added screenshot export feature.
+- Added debug info for camera.
 
