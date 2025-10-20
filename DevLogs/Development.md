@@ -107,12 +107,18 @@ Plan 4: Maybe explore a different visual style altogether—something like the p
 - But verified the feasibility of remote testing via a video call.
 
 ### October 6
-- Found that adding some music could improve immersion during testing, downloaded a royalty-free "cosmos" music from Pixabay (https://pixabay.com/music/ambient-floating-in-space-full-soundtrack-272331/) and planned to make it play with the code (not via other media player software)
+- Found that adding some music could improve immersion during testing, downloaded a royalty-free "cosmos" music from Pixabay (https://pixabay.com/music/ambient-floating-in-space-full-soundtrack-272331/) and planned to make it play with the code (not via other media player software).
   
 ### October 7
-- Fixed the bug preventing mouse interaction with the scene in "manual camera mode"
-- Improved the guiding messages
+- Fixed the bug preventing mouse interaction with the scene in "manual camera mode".
+- Improved the guiding messages.
 
 ### October 9
 - Improved guiding messages.
 - Added an auto music playing feature.
+
+### October 20
+- Cleaned the code, removed invalid key controls.
+- Improved guiding messages.
+- Added multilingual options.
+
