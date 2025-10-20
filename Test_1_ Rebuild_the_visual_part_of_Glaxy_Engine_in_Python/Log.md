@@ -134,7 +134,7 @@ Connected input and output with `main.py` and `motion_input.py`, deleted "stabil
 
 ### September 1
 1. Created `main_multiGalaxies.py` to see the visual effects produced by the collision of multiple galaxies.
-2. Asked two of my friends to test this version and collected some feedback
+2. Asked two of my friends to test this version and collected some feedback.
 -  Test input-03 & output-18: ![Description](TestOutput/0901.gif)
 
 ### September 2
@@ -162,4 +162,11 @@ Edited the guiding text in `main_multiGalaxies_camera.py`.
 2. Created `main_addAudio.py` for adding music.
 
 ### October 10
-Edited `main_addAudio.py`, updating music player system.
+Edited `main_addAudio.py`, updating music player system (load music files in the `/audio` folder).
+
+### October 20
+Edited `main_addAudio.py`:
+1. Cleaned the code, removed invalid key controls.
+2. Updated guiding messages, changed positions of the text, and added multilingual options (Latin characters only).
+3. Added privacy disclaimer notice in the window.
+-  Test output-22: ![Description](TestOutput/1020.gif) 
