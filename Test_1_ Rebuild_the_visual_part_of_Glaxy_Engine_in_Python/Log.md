@@ -169,4 +169,8 @@ Edited `main_addAudio.py`:
 1. Cleaned the code, removed invalid key controls.
 2. Updated guiding messages, changed positions of the text, and added multilingual options (Latin characters only).
 3. Added privacy disclaimer notice in the window.
--  Test output-22: ![Description](TestOutput/1020.gif) 
+-  Test output-22: ![Description](TestOutput/1020.gif)
+
+4. Created `main_exportPic.py` for cosmos postcode export.
+5. Edited `main_exportPic.py`, adding debug info for camera input.
+-  Test output-23: ![Description](TestOutput/1020-02.png)
