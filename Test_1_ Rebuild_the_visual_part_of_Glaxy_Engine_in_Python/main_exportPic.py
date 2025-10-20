@@ -133,7 +133,8 @@ class MediaCapture:
     LANGUAGES = {
         "en": {
             "window_title": "Save Cosmos Postcard",
-            "postcard_title": "✨ Your Cosmos {media} is ready! ✨",
+            "window_big_title": "✨ Your Cosmos {media} is ready! ✨", 
+            "postcard_title": "----- Cosmos Vision Postcard -----",
             "enter_name": "Enter your name here (optional):",
             "save": "💾 Save 💾",
             "skip": "⏭️ Skip ⏭️",
@@ -141,7 +142,8 @@ class MediaCapture:
         },
         "es": {
             "window_title": "Guardar Postal del Cosmos",
-            "postcard_title": "✨ ¡Tu Cosmos {media} está listo! ✨",
+            "window_big_title":"✨ ¡Tu Cosmos {media} está listo! ✨",
+            "postcard_title": "----- Postal de Cosmos Vision -----",
             "enter_name": "Ingresa tu nombre aquí (opcional):",
             "save": "💾 Guardar 💾",
             "skip": "⏭️ Omitir ⏭️",
@@ -149,7 +151,8 @@ class MediaCapture:
         },
         "fr": {
             "window_title": "Enregistrer la Carte Cosmos",
-            "postcard_title": "✨ Votre Cosmos {media} est prêt ! ✨",
+            "window_big_title":"✨ Votre Cosmos {media} est prêt ! ✨",
+            "postcard_title": "----- Carte Postale Cosmos Vision -----",
             "enter_name": "Entrez votre nom ici (optionnel) :",
             "save": "💾 Enregistrer 💾",
             "skip": "⏭️ Passer ⏭️",
@@ -248,7 +251,7 @@ class MediaCapture:
             lbl.image = photo
             lbl.pack(pady=10)
 
-            title_text = self.LANGUAGES[lang]["postcard_title"].format(media=media_type.title())
+            title_text = self.LANGUAGES[lang]["window_big_title"].format(media=media_type.title())
             title = ttk.Label(dialog, text=title_text, font=("Arial", 14, "bold"), foreground="lightyellow", background="#1a1a1a")
             title.pack(pady=10)
 
