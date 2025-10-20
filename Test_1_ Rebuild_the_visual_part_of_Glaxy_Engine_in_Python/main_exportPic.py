@@ -1072,7 +1072,7 @@ def run_input():
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,255,255), 1)
 
             try:
-                cv2.imshow('Multi-Galaxy Input', image)
+                cv2.imshow('Camera Input', image)
             except Exception as e:
                 print(f"Display error: {e}")
                 break
