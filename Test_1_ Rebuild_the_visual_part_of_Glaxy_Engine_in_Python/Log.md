@@ -171,6 +171,6 @@ Edited `main_addAudio.py`:
 3. Added privacy disclaimer notice in the window.
 -  Test output-22: ![Description](TestOutput/1020.gif)
 
-4. Created `main_exportPic.py` for cosmos postcode export.
+4. Created `main_exportPic.py` for cosmos postcard export (with a name-input UI).
 5. Edited `main_exportPic.py`, adding debug info for camera input.
 -  Test output-23: ![Description](TestOutput/1020-02.png)
