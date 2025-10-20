@@ -335,7 +335,7 @@ class MediaCapture:
     
     def add_postcard_style(self, img, user_name=""):
         """Add postcard border and text"""
-        lang = self.current_language
+        lang = get_current_language() or "en"
         # Create new image with border
         border_size = 40
         new_width = img.width + border_size * 2
