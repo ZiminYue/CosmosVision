@@ -43,7 +43,7 @@ CosmosVision_main/
 Please follow the steps below to set up and run the project:
 
 
-
+#
 ### 1. Download the Project
 
 The program is contained within the `\CosmosVision_main` folder. You can either **clone** the repository or **download it as a ZIP file** from GitHub and extract it manually.
@@ -51,7 +51,7 @@ The program is contained within the `\CosmosVision_main` folder. You can either 
 
 
 
-
+#
 ### 2. Navigate to the Project Folder
 
 Open `Command Prompt` and run the following code:
@@ -63,7 +63,7 @@ Open `Command Prompt` and run the following code:
 
 
 
-
+#
 ### 3. Install Miniconda
 
 Download and install **[Miniconda](https://docs.conda.io/en/latest/miniconda.html)** for Windows.
@@ -74,7 +74,7 @@ During installation, make sure to select:
 
 
 
-
+#
 ### 4. Create and activate a new environment
 
 Run the following commands, one after the other:
@@ -89,7 +89,7 @@ conda activate cosmosvision
 
 
 
-
+#
 ### 5. Install GPU-related dependencies
 
 Run the following command:
@@ -103,7 +103,7 @@ conda install -c conda-forge cupy cudatoolkit=11.8
 
 
 
-
+#
 ### 6. Install other dependencies
 
 Run the following command:
@@ -114,7 +114,7 @@ pip install -r requirements.txt
 
 
 
-
+#
 ### 7. Run the program
 
 Run the following command:
