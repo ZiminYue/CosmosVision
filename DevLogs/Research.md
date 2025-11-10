@@ -136,3 +136,7 @@
 
 ### October 19
 - Refined the methodology section (the User Studies part)
+
+### October 20-November 10
+- Finished writing the thesis
+- Booked an academic support tutorial for checking and refining
