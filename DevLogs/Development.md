@@ -1,6 +1,9 @@
+## NOTE:
+For detailed devlog with images, see **[Log.md in the tech-works branch]([https://github.com/angeluriot/Galaxy_simulation/](https://git.arts.ac.uk/24004556/CosmosVision/blob/tech-works/Test_1_%20Rebuild_the_visual_part_of_Glaxy_Engine_in_Python/Log.md))**
+
 ### June 26
 
-- Tested **Galaxy Engine** from https://github.com/NarcisCalin/Galaxy-Engine (C++, only avaliable for Windows) and built the executable exe file
+- Tested **Galaxy Engine** from https://github.com/NarcisCalin/Galaxy-Engine (C++, only avaliable for Windows) and built the executable .exe file
   
 *Notes*:
 1. For building it in **VS Code**, need to download and install **MinGW-w64** from WinLibs (https://www.winlibs.com/)
