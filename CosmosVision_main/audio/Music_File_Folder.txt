@@ -1,0 +1,4 @@
+Please place music files in this folder.
+
+Supporting formats:
+*.mp3, *.wav, *.ogg, *.flac
