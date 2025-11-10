@@ -20,6 +20,7 @@ The program was tested with Python 3.10, CuPy 12.3, and CUDA 11.8 on Windows 11.
 ## 📂 Project Structure
 
 ```
+
 CosmosVision_main/
 ├── main.py                
 ├── core.py                 
@@ -29,8 +30,8 @@ CosmosVision_main/
 ├── audio/ (optional)       # Folder for music files
 │      └─ *.mp3, *.wav, *.ogg, *.flac
 ├── postcards/ (auto-generated)   # Saved postcards
-├── requirements.txt        
-└── README.md
+└── requirements.txt        
+
 ```
 
 
