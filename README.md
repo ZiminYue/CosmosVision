@@ -58,7 +58,7 @@ Open `Command Prompt` and run the following code:
 
 `cd /d "path-to-project-folder\CosmosVision_main"`
 
-(Replace "path-to-project-folder" with the actual folder path on your computer.)
+Replace "path-to-project-folder" with the actual folder path on your computer.
 
 
 
@@ -84,7 +84,7 @@ conda create -n cosmosvision python=3.10
 conda activate cosmosvision
 ```
 
-(You can replace "cosmosvision" here with any environment name you prefer.)
+You can replace "cosmosvision" here with any environment name you prefer.
 
 
 
