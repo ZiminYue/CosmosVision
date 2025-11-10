@@ -5,7 +5,7 @@ It forms part of the *Cosmos Vision* research project, developed as part of **MS
 
 
 
-# 💡 Notes
+## 💡 Notes
 
 The project was tested with Python 3.10, CuPy 12.3, and CUDA 11.8 on Windows 11.
 
@@ -13,7 +13,7 @@ The project was tested with Python 3.10, CuPy 12.3, and CUDA 11.8 on Windows 11.
 ---
 
 
-# 📂 Project Structure
+## 📂 Project Structure
 
 ```
 CosmosVision_main/
@@ -41,28 +41,22 @@ Please follow the steps below to set up and run the project:
 
 ### 1. Download the Project
 
-You can either **clone** the repository via GitHub Desktop:
-
-```
-git clone https://github.com/YourUsername/CosmosVision_main.git
-```
-
-Or download it as a ZIP file from GitHub and extract it manually.
+The program is contained within the `\CosmosVision_main` folder. You can either **clone** the repository or **download it as a ZIP file** from GitHub and extract it manually.
 
 
-
+---
 
 
 ### 2. Navigate to the Project Folder
 
-Open `command prompt` and run the following code:
+Open `Command Prompt` and run the following code:
 
 `cd /d "path-to-project-folder\CosmosVision_main"`
 
 (Replace "path-to-project-folder" with the actual folder path on your computer.)
 
 
-
+---
 
 
 ### 3. Install Miniconda
@@ -73,11 +67,14 @@ During installation, make sure to select:
 > ✅ *Add Miniconda to my PATH environment variable*
 
 
- 
+---
+
 
 ### 4. Create and activate a new environment
 
-```bash
+Run the following commands, one after the other:
+
+```
 conda create -n cosmosvision python=3.10
 conda activate cosmosvision
 ```
@@ -85,9 +82,12 @@ conda activate cosmosvision
 (You can replace "cosmosvision" here with any environment name you prefer.)
 
 
+---
 
 
 ### 5. Install GPU-related dependencies
+
+Run the following command:
 
 ```
 conda install -c conda-forge cupy cudatoolkit=11.8
@@ -96,18 +96,23 @@ conda install -c conda-forge cupy cudatoolkit=11.8
 💡 This step installs CuPy for CUDA 11.8. Make sure your GPU supports CUDA 11.8 and your drivers are up to date.
 
 
+---
 
 
 ### 6. Install other dependencies
+
+Run the following command:
 
 ```
 pip install -r requirements.txt
 ```
 
-
+---
 
 
 ### 7. Run the program
+
+Run the following command:
 
 ```
 python main.py
