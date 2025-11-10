@@ -12,7 +12,7 @@ This project was developed based on Narcis Calin's **[Galaxy Engine](https://git
 
 ## 💡 Notes
 
-The project was tested with Python 3.10, CuPy 12.3, and CUDA 11.8 on Windows 11.
+The program was tested with Python 3.10, CuPy 12.3, and CUDA 11.8 on Windows 11.
 
 ---
 
