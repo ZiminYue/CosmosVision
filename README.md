@@ -1,7 +1,6 @@
 # 🌌 Cosmos Vision
 
-**Cosmos Vision** is a computer-vision-based interactive program designed to explore the relationship between bodily motion, macro-perspective visualization, and identity perception.  
-It forms part of the *Cosmos Vision* research project, developed as part of **MSc Creative Making: Advanced Final Project** at UAL.
+**Cosmos Vision** is a computer-vision-based interactive program designed to explore the relationship between bodily motion, macro-perspective visualization, and identity perception. It forms part of the *Cosmos Vision* research project, developed as part of **MSc Creative Making: Advanced Final Project** at UAL.
 
 ---
 
