@@ -45,7 +45,7 @@ Please follow the steps below to set up and run the project:
 
 ### 1. Download the project
 
-The program is contained within the `\CosmosVision_main` folder. You can either **clone** the repository or **download it as a ZIP file** from GitHub and extract it manually.
+The program files are contained within the `\CosmosVision_main` folder. You can either **clone** the repository or **download it as a ZIP file** from GitHub and extract it manually.
 
 
 
