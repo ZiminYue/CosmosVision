@@ -3,7 +3,7 @@
 **Cosmos Vision** is a computer-vision-based interactive program designed to explore the relationship between bodily motion, macro-perspective visualization, and identity perception.  
 It forms part of the *Cosmos Vision* research project, developed as part of **MSc Creative Making: Advanced Final Project** thesis at UAL.
 
-
+---
 
 ## 💡 Notes
 
@@ -13,7 +13,7 @@ The project was tested with Python 3.10, CuPy 12.3, and CUDA 11.8 on Windows 11.
 
 ## ❤ Acknowledgement
 
-This project was developed based on Narcis Calin's **[Galaxy Engine](https://github.com/NarcisCalin/Galaxy-Engine)** and Angel Uriot's **[Galaxy simulation](https://github.com/angeluriot/Galaxy_simulation/)**, with their C++ physics and visualization frameworks converted and extended in Python under the guidance of LLMs (ChatGPT and Claude).
+This project was developed based on Narcis Calin's **[Galaxy Engine](https://github.com/NarcisCalin/Galaxy-Engine)** and Angel Uriot's **[Galaxy simulation](https://github.com/angeluriot/Galaxy_simulation/)**, with their C++ physics and visualization frameworks converted and extended in Python under the assistance of LLMs (ChatGPT and Claude).
 
 ---
 
