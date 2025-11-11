@@ -1,5 +1,5 @@
 ## NOTE
-For detailed devlog with images, see **[Log.md in the tech-works branch](https://git.arts.ac.uk/24004556/CosmosVision/blob/tech-works/Test_1_%20Rebuild_the_visual_part_of_Glaxy_Engine_in_Python/Log.md)**
+For detailed development process log with images, see **[Log.md in the tech-works branch](https://git.arts.ac.uk/24004556/CosmosVision/blob/tech-works/Test_1_%20Rebuild_the_visual_part_of_Glaxy_Engine_in_Python/Log.md)**
 
 #
 
