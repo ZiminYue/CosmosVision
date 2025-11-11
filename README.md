@@ -14,6 +14,8 @@ This project was developed based on Narcis Calin's **[Galaxy Engine](https://git
 
 The program was tested with Python 3.10, CuPy 12.3, and CUDA 11.8 on Windows 11.
 
+The `main` branch contains the complete version of the project. For detailed development process and experimental works, see the `tech-works` branch.
+
 ---
 
 
