@@ -44,7 +44,18 @@ Please follow the steps below to set up and run the project:
 
 
 
-### 1. Download the project
+### 1. Install Miniconda
+
+Download and install **[Miniconda](https://docs.conda.io/en/latest/miniconda.html)** for Windows.
+
+During installation, make sure to select:  
+> ✅ *Add Miniconda to my PATH environment variable*
+
+
+
+
+#
+### 2. Download the project
 
 The program files are contained within the `\CosmosVision_main` folder. You can either **clone** the repository or **download it as a ZIP file** from GitHub and extract it manually.
 
@@ -52,24 +63,13 @@ The program files are contained within the `\CosmosVision_main` folder. You can 
 
 
 #
-### 2. Navigate to the project folder
+### 3. Navigate to the project folder
 
 Open `Command Prompt` and run the following code:
 
 `cd /d "path-to-project-folder\CosmosVision_main"`
 
 Replace "path-to-project-folder" with the actual folder path on your computer.
-
-
-
-
-#
-### 3. Install Miniconda
-
-Download and install **[Miniconda](https://docs.conda.io/en/latest/miniconda.html)** for Windows.
-
-During installation, make sure to select:  
-> ✅ *Add Miniconda to my PATH environment variable*
 
 
 
