@@ -133,4 +133,4 @@ Then the program will launch and display the interactive cosmos simulation windo
 
 ## 🎞️ Demo Video
 
-**[Panopto Link](https://ual.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=1e02f889-573d-435f-ac9d-b393016601d5)**
+**[Panopto Link](https://ual.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=1e02f889-573d-435f-ac9d-b393016601d5)** (UAL access required)
