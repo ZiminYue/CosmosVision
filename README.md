@@ -51,7 +51,7 @@ Please follow the steps below to set up and run the project:
 Download and install **[Miniconda](https://www.anaconda.com/download/success)** for Windows.
 
 During installation, make sure to select:  
-> ✅ *Add Miniconda to my PATH environment variable*
+> ✅ *Add installation to my PATH environment variable*
 
 
 
